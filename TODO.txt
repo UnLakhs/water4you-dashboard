@@ -1,0 +1,9 @@
+WATER 4 YOU: Company that has plumbing services (The app is about an sms and email reminder for a customer to change their water filter)
+
+-Login page to authenticate user with either a capcha or an email otp
+-The panel should have the options to register customers
+-The panel will have options such as: name, phone number, a description of the water filter and any other information that wants to be entered, date, countdown to when the sms is going to be sent
+-A dashboard to view all the customers that have been registered ordered by the date closer to the date that the sms is going to be sent.
+-Option to edit a customer's information since someone might replace their water filter earlier than expected
+-Buttons to add and remove customers
+-The sms and emails should be sent to the customer on the date that is set in the panel
