@@ -1,15 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddCustomer from "./AddCustomer";
+import { Customer } from "../Cosntants/constants";
 
 const tableStyles = "px-4 py-2 border border-gray-300";
 
 const CustomerSection = () => {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const response = await fetch("/api/customers");
+        const data: Customer[] = await response.json();
+        console.log("Fetched customers:", data); // Debugging
+        setCustomers(data);
+      } catch (error) {
+        console.error("Error fetching customers:", error);
+      }
+    };
+    fetchCustomers();
+  }, []);
+  
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="flex flex-col justify-center items-center text-center w-1/2 p-2 shadow-black bg-slate-700 rounded-lg">
+    <div className="flex justify-center items-center min-h-screen bg-blue-200">
+      <div className="flex flex-col justify-center items-center text-center w-1/2 p-3 shadow-black bg-[#4657a2] rounded-lg">
         {/* Add Customer Button */}
         <div
           onClick={() => setIsOpen(true)}
@@ -30,20 +46,26 @@ const CustomerSection = () => {
             </tr>
           </thead>
           <tbody>
-            <tr className="bg-gray-50 hover:bg-gray-100 transition duration-200">
-              <td className={`${tableStyles}`}>John Doe</td>
-              <td className={`${tableStyles}`}>john@example.com</td>
-              <td className={`${tableStyles}`}>(123) 456-7890</td>
-              <td className={`${tableStyles}`}>Placeholder description</td>
-              <td className={`${tableStyles}`}>5 days</td>
-            </tr>
-            <tr className="bg-white hover:bg-gray-100 transition duration-200">
-              <td className={`${tableStyles}`}>Jane Smith</td>
-              <td className={`${tableStyles}`}>jane@example.com</td>
-              <td className={`${tableStyles}`}>(987) 654-3210</td>
-              <td className={`${tableStyles}`}>Another description</td>
-              <td className={`${tableStyles}`}>3 days</td>
-            </tr>
+            {customers.length > 0 ? (
+              customers.map((customer) => (
+                <tr
+                  key={customer._id?.toString()}
+                  className="bg-white hover:bg-gray-100 transition duration-200"
+                >
+                  <td className={`${tableStyles}`}>{customer.name}</td>
+                  <td className={`${tableStyles}`}>{customer.email}</td>
+                  <td className={`${tableStyles}`}>{customer.phoneNumber}</td>
+                  <td className={`${tableStyles}`}>{customer.description}</td>
+                  <td className={`${tableStyles}`}>{customer.date}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="text-center py-4">
+                  No customers found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
