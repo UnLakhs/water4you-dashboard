@@ -41,10 +41,10 @@ const Nav = () => {
         {/* Logo */}
         <Image
           src="/images/vecteezy_drop-of-water_20967303.png"
-          alt="Duaelity logo"
+          alt="Droplet image"
           width={20}
           height={20}
-          className="object-cover transition-all duration-300"
+          className="object-cover"
         />
         {/* Burger Menu Button */}
         <button
