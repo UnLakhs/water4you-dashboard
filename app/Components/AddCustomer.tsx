@@ -9,8 +9,6 @@ interface AddCustomerProps {
 }
 
 const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
-  if (!isOpen) return null;
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,7 +21,9 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -44,16 +44,25 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
 
       if (response.ok) {
         setSuccess(true);
-        setFormData({ name: "", email: "", phoneNumber: "", description: "", date: "" });
+        setFormData({
+          name: "",
+          email: "",
+          phoneNumber: "",
+          description: "",
+          date: "",
+        });
       } else {
         setError(data.error || "Failed to add customer");
       }
     } catch (err) {
+      console.error(err);
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div
@@ -67,7 +76,9 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
       >
         <h1 className="text-2xl font-bold mb-4">Add Customer</h1>
 
-        {success && <p className="text-green-600 mb-2">Customer added successfully!</p>}
+        {success && (
+          <p className="text-green-600 mb-2">Customer added successfully!</p>
+        )}
         {error && <p className="text-red-600 mb-2">{error}</p>}
 
         <input

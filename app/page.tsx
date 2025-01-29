@@ -98,7 +98,7 @@ const LogIn = () => {
 
       <div>
         <Link href="/Authentication/SignUp">
-          Don't have an account? Sign Up
+          Don&apos;t have an account? Sign Up
         </Link>
       </div>
     </div>
