@@ -13,7 +13,6 @@ const CustomerSection = () => {
       try {
         const response = await fetch("/api/customers");
         const data: Customer[] = await response.json();
-        console.log("Fetched customers:", data); // Debugging
         setCustomers(data);
       } catch (error) {
         console.error("Error fetching customers:", error);
