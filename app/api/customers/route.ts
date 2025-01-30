@@ -1,6 +1,7 @@
 import clientPromise from "@/app/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 
+//Add a new customer
 export async function POST(request: NextRequest) {
   try {
     // Parse request safely
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
     // Insert new customer
     const newCustomer = await customers.insertOne({
       name,
-      email: email.toLowerCase(), // Normalize email
+      email: email.toLowerCase(),
       phoneNumber,
       description,
       date,
