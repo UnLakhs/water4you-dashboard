@@ -51,6 +51,7 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
           description: "",
           date: "",
         });
+        location.reload();
       } else {
         setError(data.error || "Failed to add customer");
       }
