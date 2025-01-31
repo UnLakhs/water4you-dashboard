@@ -13,6 +13,9 @@ const tableStyles = "px-4 py-2 border border-gray-300";
 
 const CustomerSection = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 20; // Customers per page
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
     null
   );
@@ -20,19 +23,27 @@ const CustomerSection = () => {
   const [isEditing, setIsEditing] = useState(false); // Edit customer modal state
   const [isViewing, setIsViewing] = useState(false); // View customer modal state
   const [isDeleting, setIsDeleting] = useState(false); // Delete customer modal state
-
   useEffect(() => {
     const fetchCustomers = async () => {
-      try {
-        const response = await fetch("/api/customers");
-        const data: Customer[] = await response.json();
-        setCustomers(data);
-      } catch (error) {
-        console.error("Error fetching customers:", error);
-      }
+      const res = await fetch(
+        `/api/customers?page=${currentPage}&limit=${limit}`
+      );
+      const data = await res.json();
+      setCustomers(data.customers);
+      setTotalPages(data.totalPages);
     };
     fetchCustomers();
-  }, []);
+  }, [currentPage]);
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-blue-200">
@@ -103,6 +114,18 @@ const CustomerSection = () => {
             )}
           </tbody>
         </table>
+
+        <div>
+          <button disabled={currentPage === 1} onClick={prevPage}>
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button disabled={currentPage === totalPages} onClick={nextPage}>
+            Next
+          </button>
+        </div>
       </div>
 
       {/* Add Customer Modal */}
