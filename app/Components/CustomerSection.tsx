@@ -7,16 +7,17 @@ import { FaPlus } from "react-icons/fa6";
 import ActionButtons from "./ActionButtons";
 import ViewCustomer from "./[id]/ViewCustomer";
 import DeleteCustomer from "./[id]/DeleteCustomer";
+import EditCustomer from "./[id]/EditCustomer";
 
 const tableStyles = "px-4 py-2 border border-gray-300";
 
 const CustomerSection = () => {
-
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
     null
   );
   const [isAdding, setIsAdding] = useState(false); // Add customer modal state
+  const [isEditing, setIsEditing] = useState(false); // Edit customer modal state
   const [isViewing, setIsViewing] = useState(false); // View customer modal state
   const [isDeleting, setIsDeleting] = useState(false); // Delete customer modal state
 
@@ -81,6 +82,10 @@ const CustomerSection = () => {
                         setSelectedCustomerId(customer._id?.toString() || null);
                         setIsViewing(true);
                       }}
+                      onEdit={() => {
+                        setSelectedCustomerId(customer._id?.toString() || null);
+                        setIsEditing(true);
+                      }}
                       onDelete={() => {
                         setSelectedCustomerId(customer._id?.toString() || null);
                         setIsDeleting(true);
@@ -118,6 +123,15 @@ const CustomerSection = () => {
           customerId={selectedCustomerId}
           isOpen={isDeleting}
           onClose={() => setIsDeleting(false)}
+        />
+      )}
+
+      {/* Edit Customer Modal */}
+      {selectedCustomerId && (
+        <EditCustomer
+          customerId={selectedCustomerId}
+          isOpen={isEditing}
+          onClose={() => setIsEditing(false)}
         />
       )}
     </div>

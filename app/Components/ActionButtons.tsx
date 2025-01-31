@@ -4,9 +4,10 @@ import { CiViewList } from "react-icons/ci";
 interface ActionButtonProps {
   onView: () => void;
   onDelete: () => void;
+  onEdit: () => void;
 }
 
-const ActionButtons = ({ onView, onDelete }: ActionButtonProps) => {
+const ActionButtons = ({ onView, onDelete, onEdit }: ActionButtonProps) => {
   return (
     <>
       <div className="flex gap-2 mb-2">
@@ -18,7 +19,7 @@ const ActionButtons = ({ onView, onDelete }: ActionButtonProps) => {
           <span>View</span>
         </button>
         <button
-          onClick={onView}
+          onClick={onEdit}
           className="bg-[#427d96] rounded-md text-white p-2 flex gap-1 items-center cursor-pointer hover:opacity-80 transition duration-200"
         >
           <FaRegEdit />
