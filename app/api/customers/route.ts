@@ -53,18 +53,32 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "20");
+  const skip = (page - 1) * limit;
+
   try {
     const client = await clientPromise;
     const db = client.db("Water4You");
     const customers = db.collection("customers");
 
-    const allCustomers = await customers.find({}).toArray();
-    return NextResponse.json(allCustomers);
+    const totalCustomers = await customers.countDocuments();
+    const customerList = await customers.find({})
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+
+    return NextResponse.json({
+      customers: customerList,
+      totalPages: Math.ceil(totalCustomers / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.error("Error fetching customers:", error);
     return NextResponse.json(
-      { error: "Failed to fetch customers" },
+      { error: "Failed to fetch customer data" },
       { status: 500 }
     );
   }
