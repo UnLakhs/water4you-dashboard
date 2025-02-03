@@ -115,15 +115,15 @@ const CustomerSection = () => {
           </tbody>
         </table>
 
-        <div>
+        <div className="text-white mt-4">
           <button disabled={currentPage === 1} onClick={prevPage}>
-            Previous
+            {"<"}
           </button>
           <span>
             Page {currentPage} of {totalPages}
           </span>
           <button disabled={currentPage === totalPages} onClick={nextPage}>
-            Next
+          {">"}
           </button>
         </div>
       </div>
