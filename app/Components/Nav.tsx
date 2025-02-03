@@ -39,13 +39,15 @@ const Nav = () => {
       {/* Logo and burger icon */}
       <div className="flex justify-between items-center p-4">
         {/* Logo */}
-        <Image
-          src="/images/vecteezy_drop-of-water_20967303.png"
-          alt="Droplet image"
-          width={20}
-          height={20}
-          className="object-cover"
-        />
+        <Link href={"/Dashboard/Home"}>
+          <Image
+            src="/images/vecteezy_drop-of-water_20967303.png"
+            alt="Droplet image"
+            width={20}
+            height={20}
+            className="object-cover"
+          />
+        </Link>
         {/* Burger Menu Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -62,26 +64,23 @@ const Nav = () => {
         } lg:block bg-[#0f1925] lg:bg-transparent w-full lg:h-full transition-all duration-300`}
       >
         <Link href={"/"} className={`${navDivStyles}`}>
-        <MdOutlineTextsms size={20}/>
+          <MdOutlineTextsms size={20} />
           <span>SMS Logs</span>
         </Link>
         {user ? (
-          <div className={`${navDivStyles} lg:mt-auto`}>
-            <FaUserCircle size={20} />
-            <span>{user.username}</span>
-          </div>
-        ) : (
           <Link
-            href={`/`}
+            href={`/Dashboard/Profile`}
             className={`${navDivStyles} lg:mt-auto`}
           >
-            <CiLogin />
-            <span>Log In!</span>
+            <FaUserCircle size={20} />
+            <span>{user.username}</span>
           </Link>
+        ) : (
+          <span>Loading...</span>
         )}
       </div>
     </nav>
   );
-}
+};
 
 export default Nav;
