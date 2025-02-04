@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { User } from "../Cosntants/constants";
+import ChangeUserPassword from "./ChangeUserPassword";
 
 const ProfileInfoForm = () => {
   const [formData, setFormData] = useState({
@@ -14,10 +15,16 @@ const ProfileInfoForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
+  const [isChanging, setIsChanging] = useState(false); // Change password modal
+
+  //Fetch user details when component mounts
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`/api/User`, { method: "GET" });
+        const res = await fetch(`/api/User`, {
+          method: "GET",
+          credentials: "include",
+        });
         const data: User = await res.json();
         setFormData({
           username: data.username || "",
@@ -32,7 +39,7 @@ const ProfileInfoForm = () => {
     fetchUser();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
@@ -44,10 +51,13 @@ const ProfileInfoForm = () => {
     setSuccess(false);
 
     try {
+      const { role, ...formDataWithoutRole } = formData; // Remove 'role' from submit payload to prevent user from changing it from inspect
+
       const res = await fetch(`/api/User`, {
         method: "PUT",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formDataWithoutRole),
       });
 
       if (!res.ok) {
@@ -64,55 +74,88 @@ const ProfileInfoForm = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mt-12">
       <h2 className="text-lg font-bold mb-4">Edit User Info</h2>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          placeholder="Username"
-          className="border p-2 rounded"
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          className="border p-2 rounded"
-          required
-        />
-        <select
-          onChange={handleChange}
-          className="border p-2 rounded"
-          name="role"
-          id="role"
-          value={formData.role}
-        >
-          <option value="admin">Admin</option>
-          <option value="staff">Staff</option>
-        </select>
+        {/* Username  */}
+        <div className="grid grid-cols-[100px_1fr] gap-4 items-center">
+          <label className="font-semibold text-lg" htmlFor="username">
+            Username:
+          </label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="Username"
+            className="border p-2 rounded w-full"
+            required
+          />
+        </div>
 
+        {/* Email */}
+        <div className="grid grid-cols-[100px_1fr] gap-4 items-center">
+          <label className="font-semibold text-lg" htmlFor="email">
+            Email:
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            className="border p-2 rounded w-full"
+            required
+          />
+        </div>
+
+        {/* Role */}
+        <div className="grid grid-cols-[100px_1fr] gap-4 items-center">
+          <label className="font-semibold text-lg" htmlFor="role">
+            Role:
+          </label>
+          <input
+            type="text"
+            name="role"
+            id="role"
+            value={formData.role}
+            disabled
+            className="border p-2 rounded w-full bg-gray-100"
+          />
+        </div>
+
+        {/* Error and Success messages */}
         {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-500">User updated successfully!</p>}
+        {success && (
+          <p className="text-green-500">User updated successfully!</p>
+        )}
 
-        <div className="flex justify-end gap-2 mt-4">
-          <button type="button" className="bg-gray-300 px-4 py-2 rounded">
-            Cancel
+        {/* Change password and Submit buttons */}
+        <div className="flex justify-between gap-2 mt-4">
+          <button
+            onClick={() => setIsChanging(true)}
+            className="bg-gray-300 px-4 py-2 hover:opacity-70 transition duration-200 rounded"
+            type="button"
+          >
+            Change Password
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:opacity-70 transition duration-200"
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </form>
+      {/* Conditionally render ChangeUserPassword */}
+      {isChanging && (
+        <ChangeUserPassword
+          isOpen={isChanging}
+          onClose={() => setIsChanging(false)}
+        />
+      )}
     </div>
   );
 };
