@@ -34,10 +34,10 @@ const Profile = async () => {
   }
 
   return (
-    <div className="bg-blue-200">
+    <div className="bg-blue-200 h-screen">
       <Nav />
       {/* Details of user profile */}
-      <div className="flex h-screen justify-between items-center ml-60">
+      <div className="flex justify-between items-start ml-60">
         <ProfileInfoForm />
       </div>
         
