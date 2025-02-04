@@ -1,37 +1,32 @@
 //Utilities
-import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
 //Components
 import Nav from "@/app/Components/Nav";
-import { User } from "@/app/Cosntants/constants";
 import { redirect } from "next/navigation";
-import CustomerSection from "@/app/Components/CustomerSection";
+import ProfileInfoForm from "@/app/Components/ProfileInfoForm";
+import { User } from "@/app/Cosntants/constants";
 
 //Server side way to get user data from session
-const getUserIdFromSession = async () => {
+const getUserFromSession = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
-  try {
-    if (token && process.env.JWT_SECRET) {
-      const decodedToken = jwt.verify(
-        token,
-        process.env.JWT_SECRET as string
-      ) as User;
-      
-      const res = await fetch(`http://localhost:3000/api/User/${decodedToken.id}`, {method: "GET"});
-      const data = await res.json();
-      console.log(data);
 
-      return decodedToken;
+  try {
+    if (token) {
+      const res = await fetch(`http://localhost:3000/api/User`, { method: "GET" });
+      const data: User = await res.json();
+
+      return data; // No need to return the decoded token manually anymore
     }
   } catch (error) {
-    console.error("Failed to decode token:", error);
+    console.error("Failed to fetch user:", error);
   }
 };
 
+
 const Profile = async () => {
-  const user = await getUserIdFromSession();
+  const user = await getUserFromSession();
 
   //If user is not logged in, redirect to login page
   if (!user) {
@@ -39,14 +34,16 @@ const Profile = async () => {
   }
 
   return (
-    <div>
+    <div className="bg-blue-200">
       <Nav />
       {/* Details of user profile */}
-      <div className="flex flex-col items-center justify-center h-screen bg-blue-200">
+      <div className="flex h-screen justify-between items-center ml-60">
+        <ProfileInfoForm />
+      </div>
         
 
         
-      </div>
+      
     </div>
   );
 };
