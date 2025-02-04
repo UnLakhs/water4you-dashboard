@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { MdOutlineTextsms } from "react-icons/md";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi"; // Burger and close icons
-import { CiLogin } from "react-icons/ci";
 import Link from "next/link";
 import { User } from "../Cosntants/constants";
 import { FaUserCircle } from "react-icons/fa";
