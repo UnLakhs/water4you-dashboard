@@ -5,9 +5,9 @@ import AddCustomer from "./AddCustomer";
 import { Customer } from "../Cosntants/constants";
 import { FaPlus } from "react-icons/fa6";
 import ActionButtons from "./ActionButtons";
-import ViewCustomer from "./[id]/ViewCustomer";
-import DeleteCustomer from "./[id]/DeleteCustomer";
-import EditCustomer from "./[id]/EditCustomer";
+import ViewCustomer from "./ViewCustomer";
+import DeleteCustomer from "./DeleteCustomer";
+import EditCustomer from "./EditCustomer";
 
 const tableStyles = "px-4 py-2 border border-gray-300";
 
