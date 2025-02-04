@@ -76,7 +76,7 @@ const EditCustomer = ({ isOpen, onClose, customerId }: EditCustomerProps) => {
       setSuccess(true);
       alert("Customer updated successfully");
       onClose(); // Close modal after successful update
-      location.reload(); // Refresh data 
+      location.reload(); // Refresh data
     } catch (err) {
       setError("An unexpected error occurred");
     } finally {
@@ -143,13 +143,6 @@ const EditCustomer = ({ isOpen, onClose, customerId }: EditCustomerProps) => {
           {success && <p className="text-green-500">Customer updated!</p>}
 
           <div className="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-300 px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
             <button
               type="submit"
               disabled={loading}
