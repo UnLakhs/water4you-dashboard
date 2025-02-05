@@ -72,7 +72,12 @@ const Nav = () => {
             className={`${navDivStyles} lg:mt-auto`}
           >
             <FaUserCircle size={20} />
-            <span>{(user.username).slice(0,5)}...</span>  {/* Display the first 5 characters of the username to not mess with the icon size */}
+            {/* Display the first 5 characters of the username to not mess with the icon size */}
+            {user.username.length > 5 ? (
+              <span>{user.username.slice(0, 5)}...</span>
+            ) : (
+              <span>{user.username}</span>
+            )}
           </Link>
         ) : (
           <span>Loading...</span>
