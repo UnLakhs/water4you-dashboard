@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { User } from "../Cosntants/constants";
 import ChangeUserPassword from "./ChangeUserPassword";
+import { useRouter } from "next/navigation";
 
 const ProfileInfoForm = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const ProfileInfoForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const router = useRouter();
 
   const [isChanging, setIsChanging] = useState(false); // Change password modal
 
@@ -65,6 +67,9 @@ const ProfileInfoForm = () => {
       }
 
       setSuccess(true);
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     } catch (error) {
       console.error("Error updating user:", error);
       setError("Failed to update user.");
@@ -85,6 +90,7 @@ const ProfileInfoForm = () => {
           </label>
           <input
             type="text"
+            id="username"
             name="username"
             value={formData.username}
             onChange={handleChange}
@@ -102,6 +108,7 @@ const ProfileInfoForm = () => {
           <input
             type="email"
             name="email"
+            id="email"
             value={formData.email}
             onChange={handleChange}
             placeholder="Email"
@@ -143,7 +150,7 @@ const ProfileInfoForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:opacity-70 transition duration-200"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
           >
             {loading ? "Saving..." : "Save Changes"}
           </button>
