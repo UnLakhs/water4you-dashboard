@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       username: username.trim(),
       email: email.trim(),
       password: hashedPassword,
+      role: "staff",
     });
     return NextResponse.json(
       { message: "User created successfully" }
