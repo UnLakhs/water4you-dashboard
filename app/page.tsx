@@ -95,12 +95,6 @@ const LogIn = () => {
           Log in
         </button>
       </form>
-
-      <div>
-        <Link href="/Authentication/SignUp">
-          Don&apos;t have an account? Sign Up
-        </Link>
-      </div>
     </div>
   );
 };
