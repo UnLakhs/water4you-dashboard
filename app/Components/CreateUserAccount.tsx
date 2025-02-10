@@ -86,7 +86,7 @@ const CreateUserAccount = () => {
         onSubmit={handleSubmit}
         className="flex flex-col gap-3"
       >
-        <h1 className="text-4xl font-bold mb-2">Create Staff Account</h1>
+        <h2 className="text-4xl font-bold mb-2">Create Staff Account</h2>
         {errorMessage && (
           <div className="mb-4 text-red-500">{errorMessage}</div>
         )}
@@ -98,12 +98,13 @@ const CreateUserAccount = () => {
 
         {/* Username */}
         <div className="grid grid-cols-[100px_1fr] gap-4 items-center">
-          <label htmlFor="username" className="font-semibold text-lg">
+          <label htmlFor="staff-username" className="font-semibold text-lg">
             Username:
           </label>
           <input
             type="text"
             name="username"
+            id="staff-username"
             placeholder="Username"
             className="border p-2 rounded w-full"
             value={formData.username}
@@ -115,12 +116,13 @@ const CreateUserAccount = () => {
 
         {/* Email */}
         <div className="grid grid-cols-[100px_1fr] gap-4 items-center">
-          <label htmlFor="email" className="font-semibold text-lg">
+          <label htmlFor="staff-email" className="font-semibold text-lg">
             Email:
           </label>
           <input
             type="email"
             name="email"
+            id="staff-email"
             placeholder="Email"
             className="border p-2 rounded w-full"
             value={formData.email}
@@ -131,12 +133,13 @@ const CreateUserAccount = () => {
         </div>
         {/* Password */}
         <div className="grid grid-cols-[100px_1fr] gap-4 items-center">
-          <label htmlFor="password" className="font-semibold text-lg">
+          <label htmlFor="staff-password" className="font-semibold text-lg">
             Password:
           </label>
           <input
             type="password"
             name="password"
+            id="staff-password"
             placeholder="Password"
             className="border p-2 rounded w-full"
             value={formData.password}
