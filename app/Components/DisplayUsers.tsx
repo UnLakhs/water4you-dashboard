@@ -1,5 +1,5 @@
 "use client";
-
+import { FaRegTrashAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { User } from "../Cosntants/constants";
 import DeleteUser from "./DeleteUser";
@@ -76,16 +76,17 @@ const DisplayUsers = ({ isAdmin }: DisplayUsersProps) => {
               <td className={`${tableStyles}`}>{user.role}</td>
               {/* Conditionally render the delete button only for admins */}
               {isAdmin && (
-                <td className={`${tableStyles}`}>
-                  <button
-                    className="bg-red-500 text-white px-3 py-1 rounded"
+                <td className={`${tableStyles} items-center justify-center flex`}>
+                  <div
                     onClick={() => {
                       setSelectedUserId(user._id?.toString()); // Set the selected user
                       setIsDeleting(true); // Open the delete confirmation modal
                     }}
+                    className="bg-red-500 text-white px-3 py-1 rounded flex items-center gap-1 w-fit cursor-pointer hover:bg-red-600 transition duration-200"
                   >
-                    Delete
-                  </button>
+                    <FaRegTrashAlt />
+                    <span>Delete</span>
+                  </div>
                 </td>
               )}
             </tr>
