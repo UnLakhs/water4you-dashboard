@@ -76,13 +76,13 @@ const DisplayUsers = ({ isAdmin }: DisplayUsersProps) => {
               <td className={`${tableStyles}`}>{user.role}</td>
               {/* Conditionally render the delete button only for admins */}
               {isAdmin && (
-                <td className={`${tableStyles} items-center justify-center flex`}>
+                <td className={`${tableStyles}`}>
                   <div
                     onClick={() => {
                       setSelectedUserId(user._id?.toString()); // Set the selected user
                       setIsDeleting(true); // Open the delete confirmation modal
                     }}
-                    className="bg-red-500 text-white px-3 py-1 rounded flex items-center gap-1 w-fit cursor-pointer hover:bg-red-600 transition duration-200"
+                    className="bg-red-500 text-white px-3 py-1 mx-auto rounded flex items-center gap-1 w-fit cursor-pointer hover:bg-red-600 transition duration-200"
                   >
                     <FaRegTrashAlt />
                     <span>Delete</span>
