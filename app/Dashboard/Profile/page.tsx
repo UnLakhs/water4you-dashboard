@@ -5,7 +5,6 @@ import { cookies } from "next/headers";
 import Nav from "@/app/Components/Nav";
 import { redirect } from "next/navigation";
 import ProfileInfoForm from "@/app/Components/ProfileInfoForm";
-import Link from "next/link";
 import { User } from "@/app/Cosntants/constants";
 import CreateUserAccount from "@/app/Components/CreateUserAccount";
 import DisplayUsers from "@/app/Components/DisplayUsers";
@@ -53,7 +52,7 @@ const Profile = async () => {
           {user?.role === "admin" && <CreateUserAccount />}
         </div>  
         <div className="flex flex-col justify-center items-center text-center w-2/3 p-3 shadow-black rounded-lg ml-16">
-          <DisplayUsers />
+          <DisplayUsers isAdmin={user?.role === "admin"} />
         </div>
       </div>
     </div>
