@@ -69,7 +69,7 @@ export async function GET() {
     return NextResponse.json({
       id: user._id,
       username: user.username,
-      role: user.role ? "admin" : "staff",
+      role: user.role,
     });
   } catch (error) {
        /**
