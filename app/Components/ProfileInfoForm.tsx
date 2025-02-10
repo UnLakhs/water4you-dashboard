@@ -23,7 +23,7 @@ const ProfileInfoForm = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch(`/api/User`, {
+        const res = await fetch(`/api/Users`, {
           method: "GET",
           credentials: "include",
         });
@@ -55,7 +55,7 @@ const ProfileInfoForm = () => {
     try {
       const { role, ...formDataWithoutRole } = formData; // Remove 'role' from submit payload to prevent user from changing it from inspect
 
-      const res = await fetch(`/api/User`, {
+      const res = await fetch(`/api/Users`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -80,9 +80,16 @@ const ProfileInfoForm = () => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mt-12">
-      <h2 className="text-lg font-bold mb-4">Edit User Info</h2>
-
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <h2 className="text-4xl font-bold mb-2">Edit User Info</h2>
+        {/* Error and Success messages */}
+        {error && <div className="mb-4 text-red-500">{error}</div>}
+        {success && (
+          <div className="mb-4 text-green-500">
+            User account was created successfully!
+          </div>
+        )}
+
         {/* Username  */}
         <div className="grid grid-cols-[100px_1fr] gap-4 items-center">
           <label className="font-semibold text-lg" htmlFor="username">
@@ -131,12 +138,6 @@ const ProfileInfoForm = () => {
             className="border p-2 rounded w-full bg-gray-100"
           />
         </div>
-
-        {/* Error and Success messages */}
-        {error && <p className="text-red-500">{error}</p>}
-        {success && (
-          <p className="text-green-500">User updated successfully!</p>
-        )}
 
         {/* Change password and Submit buttons */}
         <div className="flex justify-between gap-2 mt-4">
