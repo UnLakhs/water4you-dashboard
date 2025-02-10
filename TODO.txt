@@ -1,6 +1,7 @@
 WATER 4 YOU: Company that has plumbing services (The app is about an sms and email reminder for a customer to change their water filter)
 
--A dashboard to view all the customers that have been registered ordered by the date closer to the date that the sms is going to be sent.
 -The sms and emails should be sent to the customer on the date that is set in the panel
--Table to view all registered users (it will only be visible to the admin)
--The admin should be able to delete a user
+-Add search functionality to users table
+-Add a way to refresh the user table after a user is created
+-Add a way to refresh the customer table after a customer is created/edited/deleted
+-Maybe add a Login security feature for wrong password attempts
