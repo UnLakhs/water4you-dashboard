@@ -8,6 +8,7 @@ import ProfileInfoForm from "@/app/Components/ProfileInfoForm";
 import Link from "next/link";
 import { User } from "@/app/Cosntants/constants";
 import CreateUserAccount from "@/app/Components/CreateUserAccount";
+import DisplayUsers from "@/app/Components/DisplayUsers";
 
 //Server-side function to get user data from session
 const getUserFromSession = async () => {
@@ -44,13 +45,16 @@ const Profile = async () => {
   return (
     <div className="bg-blue-200 h-screen">
       <Nav />
-      <div className="flex gap-56 items-start ml-60">
-        <ProfileInfoForm />
+      <div className="flex flex-col gap-10 justify-center items-center">
+        <div className="flex justify-between items-start ml-20 w-2/3">
+          <ProfileInfoForm />
 
-        {/* This can only be seen by users with the admin role. */}
-        {user?.role === "admin" && (
-          <CreateUserAccount />
-        )}
+          {/* This can only be seen by users with the admin role. */}
+          {user?.role === "admin" && <CreateUserAccount />}
+        </div>  
+        <div className="flex flex-col justify-center items-center text-center w-2/3 p-3 shadow-black rounded-lg ml-16">
+          <DisplayUsers />
+        </div>
       </div>
     </div>
   );
