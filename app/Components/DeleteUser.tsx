@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { User } from "../Cosntants/constants";
 
 interface DeleteUserProps {
   userId: string | null;
