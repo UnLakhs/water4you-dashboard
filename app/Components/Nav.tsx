@@ -44,7 +44,7 @@ const Nav = () => {
             alt="Droplet image"
             width={20}
             height={20}
-            className="object-cover"
+            className="w-auto h-auto object-cover"
           />
         </Link>
         {/* Burger Menu Button */}
