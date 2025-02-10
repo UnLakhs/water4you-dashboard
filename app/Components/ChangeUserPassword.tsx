@@ -26,7 +26,7 @@ const ChangeUserPassword = ({ isOpen, onClose }: ChangeUserPasswordProps) => {
   useEffect(() => {
     const fetchUser = async () => {
         try {
-            const res = await fetch(`/api/User`, {
+            const res = await fetch(`/api/Users`, {
             method: "GET",
             credentials: "include",
             });
@@ -52,14 +52,14 @@ const ChangeUserPassword = ({ isOpen, onClose }: ChangeUserPasswordProps) => {
     setSuccess(false);
   
     try {
-      const userId = user?.id; //Pass the id like that to the backend
+      const userId = user?._id; //Pass the id like that to the backend
       const { currentPassword, newPassword, confirmPassword } = formData;
       
       if (newPassword !== confirmPassword) {
         throw new Error("Passwords do not match");
       }
   
-      const res = await fetch(`/api/User/ChangePassword`, {
+      const res = await fetch(`/api/Users/ChangePassword`, {
         method: "PUT",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
