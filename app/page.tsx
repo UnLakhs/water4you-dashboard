@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const LogIn = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -41,7 +43,8 @@ const LogIn = () => {
       const result = await response.json();
       if (response.ok) {
         alert("User logged in successfully!");
-        window.location.href = "/Dashboard/Home";
+        router.push("/Dashboard/Home");
+        // window.location.href = "/Dashboard/Home";
       } else {
         setErrorMessage(result.error || "User creation failed.");
       }
@@ -51,46 +54,38 @@ const LogIn = () => {
     }
   };
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-[#469ea6]">
+    <div className="flex items-center justify-center min-h-screen bg-[#469ea6] p-4">
       <form
         onSubmit={handleSubmit}
-        className="p-8 flex flex-col gap-2 rounded-md bg-[#427d96] text-slate-100"
+        className="w-full max-w-sm p-6 rounded-lg bg-[#427d96] text-white shadow-lg"
       >
-        <h1 className="text-center text-3xl font-bold mb-6 text-white">
-          LOG IN
-        </h1>
-        {/* error messages */}
-        {errorMessage && (
-          <div className="mb-4 text-red-500">{errorMessage}</div>
-        )}
-        {/* Username */}
-        <div className="flex flex-row items-center justify-between gap-4">
-          <label htmlFor="username">Username: </label>
+        <h1 className="text-center text-3xl font-bold mb-6">LOG IN</h1>
+        {errorMessage && <div className="mb-4 text-red-400 text-sm">{errorMessage}</div>}
+        <div className="mb-4">
+          <label htmlFor="username" className="block text-lg mb-1">Username</label>
           <input
             type="text"
             name="username"
             id="username"
             value={formData.username}
             onChange={handleChange}
-            className="rounded-md py-1 text-black"
+            className="w-full p-2 text-black rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
-        {/* Password */}
-        <div className="flex flex-row items-center justify-between gap-4">
-          <label htmlFor="password">Password: </label>
+        <div className="mb-4">
+          <label htmlFor="password" className="block text-lg mb-1">Password</label>
           <input
             type="password"
             name="password"
             id="password"
             value={formData.password}
             onChange={handleChange}
-            className="rounded-md py-1 text-black"
+            className="w-full p-2 text-black rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
-        {/* Submit */}
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 transition duration-200 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
+          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           Log in
         </button>
