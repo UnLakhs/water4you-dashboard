@@ -1,5 +1,6 @@
 import clientPromise from "@/app/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
+// import { kv } from "@vercel/kv";
 
 /**
  * @description Retrieves a list of customers from the database, with pagination, search, and sorting.
@@ -18,6 +19,12 @@ export async function GET(req: NextRequest) {
 
   const search = searchParams.get("search") || ""; //Search term
   const order = searchParams.get("order") === "desc" ? -1 : 1; // Sort order (ascending or descending), defaults to ascending
+
+  // const cacheKey = `customers-page-${page}-search-${search}-order-${order}`;
+  // const cachedData = await kv.get(cacheKey);
+  // if (typeof cachedData === "string") {
+  //   return NextResponse.json(JSON.parse(cachedData));
+  // }
 
   /**
    * @description Builds the MongoDB query for searching across name, email, and phoneNumber.
@@ -86,6 +93,11 @@ export async function GET(req: NextRequest) {
         { $limit: limit }, // Limit the number of documents returned
       ])
       .toArray();
+
+    // // Store result in cache for 10 minutes
+    // await kv.set(cacheKey, JSON.stringify(customerList), {
+    //   ex: 600,
+    // });
 
     /**
      * @description Returns the customer list, total pages, and current page.
