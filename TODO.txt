@@ -1,4 +1,3 @@
 WATER 4 YOU: Company that has plumbing services (The app is about an sms and email reminder for a customer to change their water filter)
 
 -The sms and emails should be sent to the customer on the date that is set in the panel
--Maybe add a Login security feature for wrong password attempts
