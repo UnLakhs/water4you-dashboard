@@ -133,8 +133,8 @@ const CustomerSection = () => {
                   className="bg-white hover:bg-gray-100 transition duration-200"
                 >
                   <td className={`${tableStyles}`}>{customer.name}</td>
-                  <td className={`${tableStyles}`}>{customer.email}</td>
-                  <td className={`${tableStyles}`}>{customer.phoneNumber}</td>
+                  <td className={`${tableStyles}`}>{customer.email || "-"}</td>
+                  <td className={`${tableStyles}`}>{customer.phoneNumber || "-"}</td>
                   <td className={`${tableStyles}`}>
                     {customer.date} <br />
                     <span className="text-sm text-gray-600">
