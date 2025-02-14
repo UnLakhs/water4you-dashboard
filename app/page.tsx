@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const LogIn = () => {
   const router = useRouter();
@@ -54,7 +54,8 @@ const LogIn = () => {
     }
   };
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#469ea6] p-4">
+    <div className="flex flex-col gap-20 items-center justify-center min-h-screen bg-[#469ea6] p-4">
+      {/* <Image src={"/images/logo.png"} alt="Water4You logo" width={400} height={200} /> */}
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm p-6 rounded-lg bg-[#427d96] text-white shadow-lg"
