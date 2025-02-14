@@ -147,14 +147,14 @@ export async function POST(request: NextRequest) {
     /**
      * @description Checks if a customer with the same phone number already exists.
      */
-    const existingCustomer = await customers.findOne({ phoneNumber });
+    // const existingCustomer = await customers.findOne({ phoneNumber });
 
-    if (existingCustomer) {
-      return NextResponse.json(
-        { error: "Customer already exists" },
-        { status: 409 }
-      );
-    }
+    // if (existingCustomer) {
+    //   return NextResponse.json(
+    //     { error: "Customer already exists" },
+    //     { status: 409 }
+    //   );
+    // }
 
     /**
      * @description Inserts the new customer data into the database.
