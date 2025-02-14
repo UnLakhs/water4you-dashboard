@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
     /**
      * @description Validates required fields.
      */
-    if (!name || !date) {
+    if (!name || (!phoneNumber && !email) || !date) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
