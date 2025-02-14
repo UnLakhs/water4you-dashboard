@@ -5,3 +5,5 @@ WATER 4 YOU: Company that has plumbing services (The app is about an sms and ema
 -Add a way to refresh the user table after a user is created
 -Add a way to refresh the customer table after a customer is created/edited/deleted
 -Maybe add a Login security feature for wrong password attempts
+-Remove the check for empty fields as customers don't always have an email
+-Remove the unique phone number since someone might need to be entered on different times with the same phone number
