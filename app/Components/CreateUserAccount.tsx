@@ -72,7 +72,7 @@ const CreateUserAccount = () => {
 
       await response.json();
       setSuccess(true);
-      // location.reload();
+      location.reload();
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage("An error occurred. Please try again.");
