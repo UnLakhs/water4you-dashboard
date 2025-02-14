@@ -6,9 +6,10 @@ interface EditCustomerProps {
   isOpen: boolean;
   onClose: () => void;
   customerId: string | null;
+  onEditSuccess: () => void;
 }
 
-const EditCustomer = ({ isOpen, onClose, customerId }: EditCustomerProps) => {
+const EditCustomer = ({ isOpen, onClose, customerId, onEditSuccess }: EditCustomerProps) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -75,8 +76,8 @@ const EditCustomer = ({ isOpen, onClose, customerId }: EditCustomerProps) => {
 
       setSuccess(true);
       alert("Customer updated successfully");
+      onEditSuccess(); // Update customer list
       onClose(); // Close modal after successful update
-      location.reload(); // Refresh data
     } catch (err) {
       setError("An unexpected error occurred");
     } finally {
@@ -105,7 +106,6 @@ const EditCustomer = ({ isOpen, onClose, customerId }: EditCustomerProps) => {
             onChange={handleChange}
             placeholder="Customer Name"
             className="border p-2 rounded"
-            required
           />
           <input
             type="email"
@@ -114,7 +114,6 @@ const EditCustomer = ({ isOpen, onClose, customerId }: EditCustomerProps) => {
             onChange={handleChange}
             placeholder="Email"
             className="border p-2 rounded"
-            required
           />
           <input
             type="tel"

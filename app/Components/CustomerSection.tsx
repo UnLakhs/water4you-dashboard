@@ -49,20 +49,22 @@ const CustomerSection = () => {
   const [isViewing, setIsViewing] = useState(false); // View customer modal state
   const [isDeleting, setIsDeleting] = useState(false); // Delete customer modal state
 
+  const fetchCustomers = async () => {
+    // Include search and order query parameters in the URL.
+    const res = await fetch(
+      `/api/customers?page=${currentPage}&limit=${limit}&search=${encodeURIComponent(
+        searchTerm
+      )}&order=${sortOrder}`
+    );
+    const data = await res.json();
+    setCustomers(data.customers);
+    setTotalPages(data.totalPages);
+  };
+
   useEffect(() => {
-    const fetchCustomers = async () => {
-      // Include search and order query parameters in the URL.
-      const res = await fetch(
-        `/api/customers?page=${currentPage}&limit=${limit}&search=${encodeURIComponent(
-          searchTerm
-        )}&order=${sortOrder}`
-      );
-      const data = await res.json();
-      setCustomers(data.customers);
-      setTotalPages(data.totalPages);
-    };
     fetchCustomers();
   }, [currentPage, searchTerm, sortOrder]);
+
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
@@ -134,7 +136,9 @@ const CustomerSection = () => {
                 >
                   <td className={`${tableStyles}`}>{customer.name}</td>
                   <td className={`${tableStyles}`}>{customer.email || "-"}</td>
-                  <td className={`${tableStyles}`}>{customer.phoneNumber || "-"}</td>
+                  <td className={`${tableStyles}`}>
+                    {customer.phoneNumber || "-"}
+                  </td>
                   <td className={`${tableStyles}`}>
                     {customer.date} <br />
                     <span className="text-sm text-gray-600">
@@ -199,6 +203,7 @@ const CustomerSection = () => {
           customerId={selectedCustomerId}
           isOpen={isDeleting}
           onClose={() => setIsDeleting(false)}
+          onDeleteSuccess={fetchCustomers}
         />
       )}
 
@@ -207,6 +212,7 @@ const CustomerSection = () => {
           customerId={selectedCustomerId}
           isOpen={isEditing}
           onClose={() => setIsEditing(false)}
+          onEditSuccess={fetchCustomers}
         />
       )}
     </div>

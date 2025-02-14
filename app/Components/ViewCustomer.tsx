@@ -12,23 +12,25 @@ interface ViewCustomerProps {
 const ViewCustomer = ({ isOpen, onClose, customerId }: ViewCustomerProps) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
 
+  const fetchCustomer = async () => {
+    if (!customerId) return;
+
+    try {
+      const res = await fetch(`/api/customers/${customerId}`, {
+        method: "GET",
+      });
+      const data = await res.json();
+      setCustomer(data);
+    } catch (error) {
+      console.error("Error fetching customer data:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchCustomer = async () => {
-      if (!customerId) return;
-
-      try {
-        const res = await fetch(`/api/customers/${customerId}`, {
-            method: "GET",
-        });
-        const data = await res.json();
-        setCustomer(data);
-      } catch (error) {
-        console.error("Error fetching customer data:", error);
-      }
-    };
-
-    fetchCustomer();
-  }, [customerId]);
+    if (isOpen) {
+      fetchCustomer();
+    }
+  }, [isOpen, customerId]);
 
   if (!isOpen || !customer) return null;
 
@@ -47,8 +49,12 @@ const ViewCustomer = ({ isOpen, onClose, customerId }: ViewCustomerProps) => {
         className="bg-white p-6 rounded-md shadow-lg flex flex-col gap-4 max-w-lg"
       >
         <h2 className="text-xl font-bold">{customer.name}</h2>
-        <p><strong>Email:</strong> {customer.email}</p>
-        <p><strong>Phone:</strong> {customer.phoneNumber}</p>
+        <p>
+          <strong>Email:</strong> {customer.email}
+        </p>
+        <p>
+          <strong>Phone:</strong> {customer.phoneNumber}
+        </p>
 
         {/* Updated description with scrolling */}
         <div className="flex flex-col gap-2">
@@ -58,8 +64,12 @@ const ViewCustomer = ({ isOpen, onClose, customerId }: ViewCustomerProps) => {
           </p>
         </div>
 
-        <p><strong>Date:</strong> {customer.date}</p>
-        <p><strong>Created At:</strong> {formatDate(customer.createdAt)}</p>
+        <p>
+          <strong>Date:</strong> {customer.date}
+        </p>
+        <p>
+          <strong>Created At:</strong> {formatDate(customer.createdAt)}
+        </p>
       </div>
     </div>
   );

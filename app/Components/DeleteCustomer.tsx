@@ -1,16 +1,14 @@
 "use client";
-
-import { useRouter } from "next/navigation"; // Use next/navigation for Next.js 13+ App Router
 import { useState } from "react";
 
 interface DeleteCustomerProps {
   isOpen: boolean;
   onClose: () => void;
   customerId: string;
+  onDeleteSuccess:  () => void;
 }
 
-const DeleteCustomer = ({ isOpen, onClose, customerId }: DeleteCustomerProps) => {
-  const router = useRouter();
+const DeleteCustomer = ({ isOpen, onClose, customerId, onDeleteSuccess }: DeleteCustomerProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -25,7 +23,7 @@ const DeleteCustomer = ({ isOpen, onClose, customerId }: DeleteCustomerProps) =>
       }
 
       alert("Customer deleted successfully");
-      location.reload();
+      onDeleteSuccess();
       onClose(); // Close the modal after deletion
     } catch (error) {
       console.error("Error deleting customer:", error);
