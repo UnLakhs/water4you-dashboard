@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Water4You Dashboard",
   description: "Control panel of Water4You",
-  icons: "/images/favicon-32x32.png",
+  icons: "https://water4you.gr/wp-content/uploads/2024/03/cropped-WATER4T-192x192.png",
 };
 
 export default function RootLayout({
