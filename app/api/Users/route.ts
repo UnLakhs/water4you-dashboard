@@ -46,7 +46,8 @@ export async function GET(req: NextRequest) {
      * @description Excludes the password from the user data before sending the response.
      */
 
-    const { password, ...safeUserData } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...safeUserData } = user;    //the "_" is a convention to indicate that the variable is not going to be used
     return NextResponse.json(safeUserData);
   } catch (error) {
     console.error("Error fetching user:", error);
@@ -87,7 +88,7 @@ export async function PUT(req: NextRequest) {
     /**
      * @description Extracts the updated user data from the request body.
      */
-    const { username, email, role, ...otherData } = await req.json();
+    const { username, email, ...otherData } = await req.json();
 
     /**
      * @description Prevents changes to the user's role.
