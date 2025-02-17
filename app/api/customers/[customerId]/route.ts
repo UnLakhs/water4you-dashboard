@@ -1,18 +1,20 @@
 import clientPromise from "@/app/lib/mongoDB";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
+import { use } from "react";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { customerId: string } }
+  { params }: { params: Promise<{ customerId: string }> }
 ) {
   try {
+    const { customerId } = use(params);
     const client = await clientPromise;
     const db = client.db("Water4You");
     const customers = db.collection("customers");
 
     const customer = await customers.findOne({
-      _id: new ObjectId((await params).customerId),
+      _id: new ObjectId(customerId),
     });
 
     if (!customer) {
@@ -37,9 +39,11 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { customerId: string } }
+  { params }: { params: Promise<{ customerId: string }> }
 ) {
   try {
+    const { customerId } = use(params);
+    const customerObjectId = new ObjectId(customerId);
     const client = await clientPromise;
     const db = client.db("Water4You");
     const customers = db.collection("customers");
@@ -49,18 +53,18 @@ export async function PUT(
     const { name, email, phoneNumber, description, date } = body;
 
     // Ensure `customerId` is valid
-    if (!params.customerId || !ObjectId.isValid(params.customerId)) {
+    if (!customerObjectId || !ObjectId.isValid(customerObjectId)) {
       return NextResponse.json(
         { error: "Invalid customer ID" },
         { status: 400 }
       );
     }
 
-    const customerId = new ObjectId(params.customerId);
+    // const customerId = new ObjectId(params.customerId);
 
     // Update customer
     const result = await customers.updateOne(
-      { _id: customerId },
+      { _id: customerObjectId },
       {
         $set: { name, email, phoneNumber, description, date },
       }
@@ -88,15 +92,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { customerId: string } }
+  { params }: { params: Promise<{ customerId: string }> }
 ) {
   try {
+    const { customerId } = use(params);
     const client = await clientPromise;
     const db = client.db("Water4You");
     const customers = db.collection("customers");
 
     await customers.deleteOne({
-      _id: new ObjectId((await params).customerId),
+      _id: new ObjectId(customerId),
     });
 
     return NextResponse.json(
