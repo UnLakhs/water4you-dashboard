@@ -1,14 +1,13 @@
 import clientPromise from "@/app/lib/mongoDB";
 import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-import { use } from "react";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ customerId: string }> }
 ) {
   try {
-    const { customerId } = use(params);
+    const { customerId } = await params;
     const client = await clientPromise;
     const db = client.db("Water4You");
     const customers = db.collection("customers");
@@ -42,7 +41,7 @@ export async function PUT(
   { params }: { params: Promise<{ customerId: string }> }
 ) {
   try {
-    const { customerId } = use(params);
+    const { customerId } = await params;
     const customerObjectId = new ObjectId(customerId);
     const client = await clientPromise;
     const db = client.db("Water4You");
@@ -95,7 +94,7 @@ export async function DELETE(
   { params }: { params: Promise<{ customerId: string }> }
 ) {
   try {
-    const { customerId } = use(params);
+    const { customerId } = await params;
     const client = await clientPromise;
     const db = client.db("Water4You");
     const customers = db.collection("customers");
