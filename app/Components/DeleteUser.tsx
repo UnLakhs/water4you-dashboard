@@ -36,6 +36,8 @@ const DeleteUser = ({ userId, isOpen, onClose }: DeleteUserProps) => {
       setLoading(false);
     }
   };
+  
+  if (!isOpen) return null;
 
   return (
     <div

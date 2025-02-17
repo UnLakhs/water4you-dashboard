@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Customer } from "@/app/Cosntants/constants";
 
 interface ViewCustomerProps {
@@ -12,7 +12,7 @@ interface ViewCustomerProps {
 const ViewCustomer = ({ isOpen, onClose, customerId }: ViewCustomerProps) => {
   const [customer, setCustomer] = useState<Customer | null>(null);
 
-  const fetchCustomer = async () => {
+  const fetchCustomer = useCallback(async () => {
     if (!customerId) return;
 
     try {
@@ -24,13 +24,13 @@ const ViewCustomer = ({ isOpen, onClose, customerId }: ViewCustomerProps) => {
     } catch (error) {
       console.error("Error fetching customer data:", error);
     }
-  };
+  }, [customerId]);
 
   useEffect(() => {
     if (isOpen) {
       fetchCustomer();
     }
-  }, [isOpen, customerId]);
+  }, [isOpen, customerId, fetchCustomer]);
 
   if (!isOpen || !customer) return null;
 

@@ -5,11 +5,12 @@ if (!process.env.MONGODB_URI) {
 }
 
 declare global {
+  // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
 const uri = process.env.MONGODB_URI;
-const options = {maxPoolSize: 10};  //Connection pooling to reuse coonnections
+const options = { maxPoolSize: 10 }; //Connection pooling to reuse coonnections
 
 let client;
 let clientPromise: Promise<MongoClient>;

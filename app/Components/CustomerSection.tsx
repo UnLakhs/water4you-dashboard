@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AddCustomer from "./AddCustomer";
 import { Customer } from "../Cosntants/constants";
 import { FaPlus } from "react-icons/fa6";
@@ -49,7 +49,7 @@ const CustomerSection = () => {
   const [isViewing, setIsViewing] = useState(false); // View customer modal state
   const [isDeleting, setIsDeleting] = useState(false); // Delete customer modal state
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     // Include search and order query parameters in the URL.
     const res = await fetch(
       `/api/customers?page=${currentPage}&limit=${limit}&search=${encodeURIComponent(
@@ -59,11 +59,11 @@ const CustomerSection = () => {
     const data = await res.json();
     setCustomers(data.customers);
     setTotalPages(data.totalPages);
-  };
+  }, [currentPage, searchTerm, sortOrder]);
 
   useEffect(() => {
     fetchCustomers();
-  }, [currentPage, searchTerm, sortOrder]);
+  }, [currentPage, searchTerm, sortOrder, fetchCustomers]);
 
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);

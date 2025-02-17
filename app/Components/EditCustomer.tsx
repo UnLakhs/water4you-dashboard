@@ -79,6 +79,7 @@ const EditCustomer = ({ isOpen, onClose, customerId, onEditSuccess }: EditCustom
       onEditSuccess(); // Update customer list
       onClose(); // Close modal after successful update
     } catch (err) {
+      console.error("Error updating customer:", err);
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);

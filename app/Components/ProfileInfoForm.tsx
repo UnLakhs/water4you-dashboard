@@ -53,6 +53,7 @@ const ProfileInfoForm = () => {
     setSuccess(false);
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { role, ...formDataWithoutRole } = formData; // Remove 'role' from submit payload to prevent user from changing it from inspect
 
       const res = await fetch(`/api/Users`, {
@@ -135,7 +136,7 @@ const ProfileInfoForm = () => {
             id="role"
             value={formData.role}
             disabled
-            className="border p-2 rounded w-full bg-gray-100"
+            className="border p-2 rounded w-full bg-gray-300"
           />
         </div>
 
