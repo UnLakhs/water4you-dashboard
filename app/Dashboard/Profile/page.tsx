@@ -9,10 +9,18 @@ import { User } from "@/app/Cosntants/constants";
 import CreateUserAccount from "@/app/Components/CreateUserAccount";
 import DisplayUsers from "@/app/Components/DisplayUsers";
 
+let baseUrl;
+
+if(process.env.NODE_ENV === "development"){
+  baseUrl = "http://localhost:3000";
+} else {
+  baseUrl = "https://water4you-dashboard.vercel.app";
+}
+
 //Server-side function to get user data from session
 const getUserFromSession = async () => {
   try {
-    const res = await fetch(`http://localhost:3000/api/Authentication/me`, {
+    const res = await fetch(`${baseUrl}/api/Authentication/me`, {
       method: "GET",
       headers: {
         Cookie: `token=${(await cookies()).get("token")?.value || ""}`, //send the cookies manually
