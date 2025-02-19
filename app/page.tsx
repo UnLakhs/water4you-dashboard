@@ -92,7 +92,7 @@ const LogIn = () => {
           }
           return newAttempts;
         });
-        setIsLoading(true);
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Error:", error);
