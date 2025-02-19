@@ -6,7 +6,9 @@ const LogIn = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({ username: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [failedAttempts, setFailedAttempts] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const maxFailedAttempts = 5;
   const lockoutDuration = 5 * 60 * 1000; // 5 minutes
 
@@ -56,6 +58,7 @@ const LogIn = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
+    setIsLoading(true);
 
     try {
       const response = await fetch(`/api/Authentication/SignIn`, {
@@ -65,10 +68,13 @@ const LogIn = () => {
       });
 
       if (response.ok) {
-        alert("User logged in successfully!");
         localStorage.removeItem("failedAttempts");
         localStorage.removeItem("lockoutTime");
-        router.push("/Dashboard/Home");
+        setSuccessMessage("Login successful! Redirecting...");
+        setIsLoading(false);
+        setTimeout(() => {
+          router.push("/Dashboard/Home");
+        }, 2000);
       } else {
         setErrorMessage("Invalid username or password.");
         setFailedAttempts((prev) => {
@@ -86,10 +92,12 @@ const LogIn = () => {
           }
           return newAttempts;
         });
+        setIsLoading(true);
       }
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage("An error occurred. Please try again.");
+      setIsLoading(false);
     }
   };
 
@@ -102,6 +110,9 @@ const LogIn = () => {
         <h1 className="text-center text-3xl font-bold mb-6">LOG IN</h1>
         {errorMessage && (
           <div className="mb-4 text-red-400 text-sm">{errorMessage}</div>
+        )}
+        {successMessage && (
+          <div className="mb-4 text-green-400 text-sm">{successMessage}</div>
         )}
         <div className="mb-4">
           <label htmlFor="username" className="block text-lg mb-1">
@@ -136,7 +147,7 @@ const LogIn = () => {
           className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
           disabled={failedAttempts >= maxFailedAttempts}
         >
-          Log in
+          {isLoading ? "Loging in..." : "Log In"}
         </button>
       </form>
     </div>
