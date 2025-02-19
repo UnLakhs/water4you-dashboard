@@ -1,35 +1,89 @@
 import clientPromise from "@/app/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
-// import { kv } from "@vercel/kv";
+import { Redis } from "@upstash/redis";
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
 
 /**
- * @description Retrieves a list of customers from the database, with pagination, search, and sorting.
- * @param {NextRequest} req - The Next.js request object.
- * @returns {NextResponse} - A JSON response containing the customer list, total pages, and current page.
+ * GET /api/customers
+ *
+ * Retrieves a paginated list of customers from the database with optional search and sorting.
+ * The complete response object is cached in Redis to improve performance.
+ *
+ * Caching Details:
+ * - The full response object is stringified with JSON.stringify before storing.
+ * - Upstash Redis client may auto-parse JSON strings on retrieval, returning an object.
+ * - The code checks if the cached data is a string or an object.
+ *   - If it's a string, we parse it.
+ *   - If it's an object, we use it directly.
+ * - If the cached object does not contain the expected keys, it is considered incomplete and cleared.
+ *
+ * @param {NextRequest} req - The incoming request object.
+ * @returns {Promise<NextResponse>} A JSON response containing:
+ *   - customers: An array of customer objects.
+ *   - totalPages: Total number of pages.
+ *   - currentPage: The current page number.
+ *
+ * @example
+ * Returned JSON structure:
+ * {
+ *   "customers": [ /* array of customers * / ],
+ *   "totalPages": 3,
+ *   "currentPage": 1
+ * }
  */
-
 export async function GET(req: NextRequest) {
-  /**
-   * @description Parses query parameters for pagination, search, and sorting.
-   */
+  // Parse query parameters for pagination, search, and sorting.
   const { searchParams } = new URL(req.url);
-  const page = parseInt(searchParams.get("page") || "1"); //current page number, defaults to 1
-  const limit = parseInt(searchParams.get("limit") || "20"); //number of customers per page, defaults to 20
-  const skip = (page - 1) * limit; //Number of documents to skip for pagination
+  const page = parseInt(searchParams.get("page") || "1"); // current page, defaults to 1
+  const limit = parseInt(searchParams.get("limit") || "20"); // customers per page, defaults to 20
+  const skip = (page - 1) * limit; // documents to skip for pagination
 
-  const search = searchParams.get("search") || ""; //Search term
-  const order = searchParams.get("order") === "desc" ? -1 : 1; // Sort order (ascending or descending), defaults to ascending
+  const search = searchParams.get("search") || ""; // search term
+  const order = searchParams.get("order") === "desc" ? -1 : 1; // sort order
 
-  // const cacheKey = `customers-page-${page}-search-${search}-order-${order}`;
-  // const cachedData = await kv.get(cacheKey);
-  // if (typeof cachedData === "string") {
-  //   return NextResponse.json(JSON.parse(cachedData));
-  // }
+  const cacheKey = `customers-page-${page}-search-${search}-order-${order}`;
+  const cachedData = await redis.get(cacheKey);
 
-  /**
-   * @description Builds the MongoDB query for searching across name, email, and phoneNumber.
-   * Uses a case-insensitive regular expression search.
-   */
+  // Log cached data for debugging
+  // console.log("Cached Data Type:", typeof cachedData);
+  // console.log("Cached Data:", cachedData);
+
+  // If cached data exists, verify it contains the full response object.
+  if (cachedData) {
+    try {
+      let fullResponse;
+      // If cached data is a string, parse it; otherwise, use it directly.
+      if (typeof cachedData === "string") {
+        fullResponse = JSON.parse(cachedData);
+      } else {
+        fullResponse = cachedData;
+      }
+
+      // Verify that the cached response includes all required keys.
+      if (
+        fullResponse &&
+        typeof fullResponse === "object" &&
+        "customers" in fullResponse &&
+        "totalPages" in fullResponse &&
+        "currentPage" in fullResponse
+      ) {
+        // console.log("Cache hit! Returning full response data.");
+        return NextResponse.json(fullResponse);
+      } else {
+        // console.log("Cached data is incomplete. Clearing cache.");
+        await redis.del(cacheKey);
+      }
+    } catch (error) {
+      console.error("Error parsing cached data, clearing cache...", error);
+      await redis.del(cacheKey);
+    }
+  }
+
+  // Build the MongoDB query for searching across name, email, and phoneNumber.
   const query = search
     ? {
         $or: [
@@ -38,24 +92,20 @@ export async function GET(req: NextRequest) {
           { phoneNumber: { $regex: search, $options: "i" } },
         ],
       }
-    : {}; // Empty query if no search term
+    : {};
 
   try {
     const client = await clientPromise;
     const db = client.db("Water4You");
     const customers = db.collection("customers");
 
-    /**
-     * @description Counts the total number of matching customers for pagination.
-     */
+    // Count total matching customers for pagination.
     const totalCustomers = await customers.countDocuments(query);
 
-    /**
-     * @description Aggregates customer data with search, sorting, pagination, and a calculated 'isOverdue' field.
-     */
+    // Aggregate customer data with search, sorting, pagination, and a calculated 'isOverdue' field.
     const customerList = await customers
       .aggregate([
-        { $match: query }, //Apply the search query
+        { $match: query },
         {
           $addFields: {
             isOverdue: {
@@ -85,28 +135,27 @@ export async function GET(req: NextRequest) {
         },
         {
           $sort: {
-            isOverdue: 1, // Sort by overdue status (upcoming first, due today next, overdue last)
-            date: order, // Then sort by date (ascending or descending)
+            isOverdue: 1, // Sort by overdue status
+            date: order, // Then sort by date
           },
         },
-        { $skip: skip }, // Skip documents for pagination
-        { $limit: limit }, // Limit the number of documents returned
+        { $skip: skip },
+        { $limit: limit },
       ])
       .toArray();
 
-    // // Store result in cache for 10 minutes
-    // await kv.set(cacheKey, JSON.stringify(customerList), {
-    //   ex: 600,
-    // });
-
-    /**
-     * @description Returns the customer list, total pages, and current page.
-     */
-    return NextResponse.json({
+    // Prepare the complete response payload.
+    const responsePayload = {
       customers: customerList,
       totalPages: Math.ceil(totalCustomers / limit),
       currentPage: page,
-    });
+    };
+
+    // Cache the complete response payload as a JSON string for 10 minutes.
+    await redis.set(cacheKey, JSON.stringify(responsePayload), { ex: 600 });
+
+    // Return the complete response.
+    return NextResponse.json(responsePayload);
   } catch (error) {
     console.error("Error fetching customers:", error);
     return NextResponse.json(
