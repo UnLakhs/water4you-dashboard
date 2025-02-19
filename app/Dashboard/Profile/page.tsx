@@ -1,3 +1,6 @@
+//Force dynamic rendering
+export const dynamic = "force-dynamic"; 
+
 //Utilities
 import { cookies } from "next/headers";
 
