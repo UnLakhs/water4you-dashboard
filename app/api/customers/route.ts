@@ -102,41 +102,44 @@ export async function GET(req: NextRequest) {
     // Count total matching customers for pagination.
     const totalCustomers = await customers.countDocuments(query);
 
-    // Aggregate customer data with search, sorting, pagination, and a calculated 'isOverdue' field.
+    // 1. Force "today" to midnight UTC so we compare apples-to-apples
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth();
+    const day = now.getUTCDate();
+    const todayMidnightUTC = new Date(Date.UTC(year, month, day)); // 00:00 UTC
+
     const customerList = await customers
       .aggregate([
         { $match: query },
         {
           $addFields: {
+            dateObject: {
+              $dateFromString: {
+                dateString: "$date", // e.g. "2025-02-21"
+                format: "%Y-%m-%d", // interpret as YYYY-MM-DD
+                timezone: "UTC",
+              },
+            },
+          },
+        },
+        {
+          $addFields: {
+            // If dateObject < todayMidnightUTC => overdue = 1
+            // Otherwise => 0
             isOverdue: {
               $cond: {
-                if: {
-                  $lt: [
-                    { $toDate: "$date" },
-                    new Date(new Date().setHours(0, 0, 0, 0)),
-                  ],
-                },
-                then: 2, // Overdue (yesterday or earlier)
-                else: {
-                  $cond: {
-                    if: {
-                      $eq: [
-                        { $toDate: "$date" },
-                        new Date(new Date().setHours(0, 0, 0, 0)),
-                      ],
-                    },
-                    then: 1, // Due today
-                    else: 0, // Upcoming (future)
-                  },
-                },
+                if: { $lt: ["$dateObject", todayMidnightUTC] },
+                then: 1,
+                else: 0,
               },
             },
           },
         },
         {
           $sort: {
-            isOverdue: 1, // Sort by overdue status
-            date: order, // Then sort by date
+            isOverdue: 1, // 0 (today/future) first, 1 (overdue) last
+            dateObject: order,
           },
         },
         { $skip: skip },
