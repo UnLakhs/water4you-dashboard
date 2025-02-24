@@ -14,8 +14,9 @@ const DeleteCustomer = ({ isOpen, onClose, customerId, onDeleteSuccess }: Delete
   const handleDelete = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/customers/${customerId}`, {
+      const res = await fetch(`/api/customers`, {
         method: "DELETE",
+        body: JSON.stringify({customerId})
       });
 
       if (!res.ok) {

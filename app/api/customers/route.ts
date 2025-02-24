@@ -1,6 +1,7 @@
 import clientPromise from "@/app/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
+import { ObjectId } from "mongodb";
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
@@ -220,6 +221,14 @@ export async function POST(request: NextRequest) {
       createdAt: new Date(), // Add createdAt field with current date
     });
 
+    // Invalidate the cache for all customer pages.
+    // Using a pattern match to find all keys starting with "customers-page-"
+    const keys = await redis.keys("customers-page-*");
+    if (keys.length > 0) {
+      await Promise.all(keys.map((key) => redis.del(key)));
+      console.log("Cache invalidated for keys:", keys);
+    }
+
     /**
      * @description Returns a success message with the ID of the newly created customer.
      */
@@ -231,6 +240,96 @@ export async function POST(request: NextRequest) {
     console.error("Error adding customer:", error);
     return NextResponse.json(
       { error: "Failed to add a customer" },
+      { status: 500 }
+    );
+  }
+}
+
+//Update a customer's info
+export async function PUT(req: NextRequest) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("Water4You");
+    const customers = db.collection("customers");
+
+    // Parse request body
+    const body = await req.json();
+    const { customerId, name, email, phoneNumber, description, date } = body;
+    const customerObjectId = new ObjectId(customerId as string);
+
+    // Ensure `customerId` is valid
+    if (!customerObjectId || !ObjectId.isValid(customerObjectId)) {
+      return NextResponse.json(
+        { error: "Invalid customer ID" },
+        { status: 400 }
+      );
+    }
+
+    // const customerId = new ObjectId(params.customerId);
+
+    // Update customer
+    const result = await customers.updateOne(
+      { _id: customerObjectId },
+      {
+        $set: { name, email, phoneNumber, description, date },
+      }
+    );
+
+    if (result.modifiedCount === 0) {
+      return NextResponse.json(
+        { error: "Customer not found or no changes made" },
+        { status: 404 }
+      );
+    }
+
+    // Invalidate the cache for all customer pages.
+    // Using a pattern match to find all keys starting with "customers-page-"
+    const keys = await redis.keys("customers-page-*");
+    if (keys.length > 0) {
+      await Promise.all(keys.map((key) => redis.del(key)));
+      console.log("Cache invalidated for keys:", keys);
+    }
+
+    return NextResponse.json(
+      { message: "Customer updated successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating customer:", error);
+    return NextResponse.json(
+      { error: "Failed to update customer data" },
+      { status: 500 }
+    );
+  }
+}
+
+//Delete a customer
+export async function DELETE(req: NextRequest) {
+  try {
+    const { customerId } = await req.json();
+    const client = await clientPromise;
+    const db = client.db("Water4You");
+    const customers = db.collection("customers");
+
+    await customers.deleteOne({
+      _id: new ObjectId(customerId as string),
+    });
+
+    // Invalidate the cache for all customer pages.
+    // Using a pattern match to find all keys starting with "customers-page-"
+    const keys = await redis.keys("customers-page-*");
+    if (keys.length > 0) {
+      await Promise.all(keys.map((key) => redis.del(key)));
+      console.log("Cache invalidated for keys:", keys);
+    }
+    return NextResponse.json(
+      { message: "Customer deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching customer:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch customer data" },
       { status: 500 }
     );
   }

@@ -9,7 +9,12 @@ interface EditCustomerProps {
   onEditSuccess: () => void;
 }
 
-const EditCustomer = ({ isOpen, onClose, customerId, onEditSuccess }: EditCustomerProps) => {
+const EditCustomer = ({
+  isOpen,
+  onClose,
+  customerId,
+  onEditSuccess,
+}: EditCustomerProps) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -64,10 +69,13 @@ const EditCustomer = ({ isOpen, onClose, customerId, onEditSuccess }: EditCustom
     setSuccess(false);
 
     try {
-      const response = await fetch(`/api/customers/${customerId}`, {
+      const response = await fetch(`/api/customers`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          customerId,
+         ...formData
+        }),
       });
 
       if (!response.ok) {
