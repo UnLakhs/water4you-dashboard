@@ -55,7 +55,7 @@ export async function GET() {
               recipient: customer.phoneNumber,
               status: "sent",
               timestamp: new Date(),
-              message: `Hello ${customer.name}, your due date is today!`
+              successMessage: `sms has been sent to ${customer.name} with phone ${customer.phoneNumber}`,
             })
           } catch (smsError) {
             console.error(

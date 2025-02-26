@@ -24,7 +24,7 @@ export interface NotificationLogs {
   recipient: string;
   status: "sent" | "failed";
   timestamp: Date;
-  message: string;
+  successMessage?: string;
   errorMessage?: ErrorMessage;
 }
 
