@@ -19,3 +19,12 @@ export interface Customer {
   date: string;
   createdAt: Date;
 }
+
+export interface NotificationLogs {
+  type: "sms" | "email",
+  recipient: string,
+  status: "sent" | "failed",
+  timestamp: Date,
+  message: string,
+  errorMessage?: any
+}

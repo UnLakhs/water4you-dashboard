@@ -24,6 +24,7 @@ export async function GET() {
 
     const client = await clientPromise;
     const db = client.db("Water4You");
+    const logsCollection = db.collection("notificationlogs");
 
     //    Determine today's date in YYYY-MM-DD format
     //    If you need a specific time zone, consider using a library like `dayjs` or `luxon`.
@@ -39,20 +40,39 @@ export async function GET() {
     // 3. Send notification to each customer who is due today
     await Promise.all(
       customersDueToday.map(async (customer) => {
+        const messageBody = `Hello ${customer.name}, your due date is today!`;
         // If customer has a phone number, send SMS via Twilio.
         if (customer.phoneNumber) {
           try {
             await twilioClient.messages.create({
-              body: `Hello ${customer.name}, your due date is today!`,
+              body: messageBody,
               from: process.env.TWILIO_FROM_NUMBER,
               to: customer.phoneNumber,
             });
             console.log(`SMS sent to ${customer.phoneNumber}`);
+
+            await logsCollection.insertOne({
+              type: "sms",
+              recipient: customer.phoneNumber,
+              status: "sent",
+              timestamp: new Date(),
+              messageBody: messageBody
+            })
           } catch (smsError) {
             console.error(
               `Failed to send SMS to ${customer.phoneNumber}:`,
               smsError
             );
+
+            // Log failure
+            await logsCollection.insertOne({
+              type: "sms",
+              recipient: customer.phoneNumber,
+              status: "failed",
+              timestamp: new Date(),
+              message: messageBody,
+              errorMessage: smsError,
+            });
           }
         }
 
@@ -68,8 +88,25 @@ export async function GET() {
             };
             const info = await transporter.sendMail(mailOptions);
             console.log(`Email sent to ${customer.email}:`, info);
+             // Log success
+             await logsCollection.insertOne({
+              type: "email",
+              recipient: customer.email,
+              status: "sent",
+              timestamp: new Date(),
+              message: mailOptions.text,
+            });
           } catch (error) {
             console.error(`Failed to send email to ${customer.email}:`, error);
+             // Log failure
+             await logsCollection.insertOne({
+              type: "email",
+              recipient: customer.email,
+              status: "failed",
+              timestamp: new Date(),
+              message: `Hello ${customer.name}, the time has come for you to change your water filter!`,
+              errorMessage: error,
+            });
           }
         }
 
