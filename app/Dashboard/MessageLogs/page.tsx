@@ -23,7 +23,7 @@ const MessageLogs = async () => {
       {/* Logs container */}
       <div className="flex flex-col gap-10 justify-center items-center">
         {logs.map((log: NotificationLogs) => (
-          <div className={` ${log.status === "sent" ? `bg-green-500` : `bg-red-500`} flex flex-row`}>
+          <div key={log._id?.toString()} className={` ${log.status === "sent" ? `bg-green-500` : `bg-red-500`} flex flex-row`}>
             <span>{log.message}</span>
           </div>
         ))}

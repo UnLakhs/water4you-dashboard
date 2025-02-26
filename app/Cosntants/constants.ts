@@ -19,11 +19,12 @@ export interface Customer {
 }
 
 export interface NotificationLogs {
-  type: "sms" | "email",
-  recipient: string,
-  status: "sent" | "failed",
-  timestamp: Date,
-  message: string,
+  _id: ObjectId;
+  type: "sms" | "email";
+  recipient: string;
+  status: "sent" | "failed";
+  timestamp: Date;
+  message: string;
   errorMessage?: ErrorMessage;
 }
 
