@@ -61,7 +61,7 @@ const Nav = () => {
       <div
         className={`${
           isMenuOpen ? "block" : "hidden"
-        } lg:block bg-[#0f1925] lg:bg-transparent w-full lg:h-full transition-all duration-300`}
+        } lg:block bg-[#427d96] lg:bg-transparent w-full lg:h-full transition-all duration-300`}
       >
         {user?.role === "admin" && (
           <Link href={"/Dashboard/MessageLogs"} className={`${navDivStyles}`}>
