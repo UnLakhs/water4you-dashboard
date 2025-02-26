@@ -35,7 +35,6 @@ const Home = async () => {
 
   return (
     <div>
-      <Nav />
       <CustomerSection /> {/*I do this so that the Home page will still be a server component */}
 
       

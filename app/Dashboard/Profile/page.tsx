@@ -56,7 +56,6 @@ const Profile = async () => {
 
   return (
     <div className="bg-blue-200 h-screen">
-      <Nav />
       <div className="flex flex-col gap-10 justify-center items-center">
         <div className="flex justify-between items-start ml-20 w-2/3">
           <ProfileInfoForm />
