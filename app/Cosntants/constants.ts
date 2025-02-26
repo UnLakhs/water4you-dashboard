@@ -1,7 +1,5 @@
 import { ObjectId } from "mongodb";
 
-export const inputStyles = `text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`;
-
 export interface User {
   _id: ObjectId;
   username: string;
@@ -26,5 +24,15 @@ export interface NotificationLogs {
   status: "sent" | "failed",
   timestamp: Date,
   message: string,
-  errorMessage?: unknown
+  errorMessage?: ErrorMessage;
+}
+
+export interface ErrorMessage {
+  status: number;
+  code: number;
+  moreInfo: string;
+}
+
+export interface LogsResponse {
+  logs: NotificationLogs[]
 }

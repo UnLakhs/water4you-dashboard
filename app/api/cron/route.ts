@@ -40,12 +40,11 @@ export async function GET() {
     // 3. Send notification to each customer who is due today
     await Promise.all(
       customersDueToday.map(async (customer) => {
-        const messageBody = `Hello ${customer.name}, your due date is today!`;
         // If customer has a phone number, send SMS via Twilio.
         if (customer.phoneNumber) {
           try {
             await twilioClient.messages.create({
-              body: messageBody,
+              body: `Hello ${customer.name}, your due date is today!`,
               from: process.env.TWILIO_FROM_NUMBER,
               to: customer.phoneNumber,
             });
@@ -56,7 +55,7 @@ export async function GET() {
               recipient: customer.phoneNumber,
               status: "sent",
               timestamp: new Date(),
-              messageBody: messageBody
+              message: `Hello ${customer.name}, your due date is today!`
             })
           } catch (smsError) {
             console.error(
@@ -70,7 +69,7 @@ export async function GET() {
               recipient: customer.phoneNumber,
               status: "failed",
               timestamp: new Date(),
-              message: messageBody,
+              message: `Hello ${customer.name}, your due date is today!`,
               errorMessage: smsError,
             });
           }
