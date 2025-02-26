@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { inputStyles } from "../Cosntants/constants";
+
+const inputStyles = `text-black shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`;
 
 interface AddCustomerProps {
   isOpen: boolean;
