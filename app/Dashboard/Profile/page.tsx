@@ -5,7 +5,6 @@ export const dynamic = "force-dynamic";
 import { cookies } from "next/headers";
 
 //Components
-import Nav from "@/app/Components/Nav";
 import { redirect } from "next/navigation";
 import ProfileInfoForm from "@/app/Components/ProfileInfoForm";
 import { User } from "@/app/Cosntants/constants";

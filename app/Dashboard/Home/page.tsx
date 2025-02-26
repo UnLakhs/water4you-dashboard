@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 
 //Components
-import Nav from "@/app/Components/Nav";
 import { User } from "@/app/Cosntants/constants";
 import { redirect } from "next/navigation";
 import CustomerSection from "@/app/Components/CustomerSection";
