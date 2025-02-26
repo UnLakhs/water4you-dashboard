@@ -16,7 +16,7 @@ const Nav = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await fetch(`/api/Authentication/Session`, {
+        const response = await fetch(`/api/Authentication/me`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -25,7 +25,8 @@ const Nav = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setUser(data.user);
+          console.log(data);
+          setUser(data);
         }
       } catch (error) {
         console.error("Failed to fetch user session", error);
@@ -62,10 +63,13 @@ const Nav = () => {
           isMenuOpen ? "block" : "hidden"
         } lg:block bg-[#0f1925] lg:bg-transparent w-full lg:h-full transition-all duration-300`}
       >
-        <Link href={"/"} className={`${navDivStyles}`}>
-          <MdOutlineTextsms size={20} />
-          <span>SMS Logs</span>
-        </Link>
+        {user?.role === "admin" && (
+          <Link href={"/Dashboard/MessageLogs"} className={`${navDivStyles}`}>
+            <MdOutlineTextsms size={20} />
+            <span>Logs</span>
+          </Link>
+        )}
+
         {user ? (
           <Link
             href={`/Dashboard/Profile`}
