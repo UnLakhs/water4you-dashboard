@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
+    //dummy comment
     const client = await clientPromise;
     const db = client.db("Water4You");
     const users = db.collection("users");
