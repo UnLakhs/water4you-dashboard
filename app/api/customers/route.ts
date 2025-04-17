@@ -1,26 +1,12 @@
 import clientPromise from "@/app/lib/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
 import { ObjectId } from "mongodb";
-
-const redis = new Redis({
-  url: process.env.KV_REST_API_URL,
-  token: process.env.KV_REST_API_TOKEN,
-});
 
 /**
  * GET /api/customers
  *
  * Retrieves a paginated list of customers from the database with optional search and sorting.
- * The complete response object is cached in Redis to improve performance.
- *
- * Caching Details:
- * - The full response object is stringified with JSON.stringify before storing.
- * - Upstash Redis client may auto-parse JSON strings on retrieval, returning an object.
- * - The code checks if the cached data is a string or an object.
- *   - If it's a string, we parse it.
- *   - If it's an object, we use it directly.
- * - If the cached object does not contain the expected keys, it is considered incomplete and cleared.
+ * Performs direct MongoDB queries without caching.
  *
  * @param {NextRequest} req - The incoming request object.
  * @returns {Promise<NextResponse>} A JSON response containing:
@@ -46,51 +32,18 @@ export async function GET(req: NextRequest) {
   const search = searchParams.get("search") || ""; // search term
   const order = searchParams.get("order") === "desc" ? -1 : 1; // sort order
 
-  const cacheKey = `customers-page-${page}-search-${search}-order-${order}`;
-  const cachedData = await redis.get(cacheKey);
-
-  // Log cached data for debugging
-  // console.log("Cached Data Type:", typeof cachedData);
-  // console.log("Cached Data:", cachedData);
-
-  // If cached data exists, verify it contains the full response object.
-  if (cachedData) {
-    try {
-      let fullResponse;
-      // If cached data is a string, parse it; otherwise, use it directly.
-      if (typeof cachedData === "string") {
-        fullResponse = JSON.parse(cachedData);
-      } else {
-        fullResponse = cachedData;
-      }
-
-      // Verify that the cached response includes all required keys.
-      if (
-        fullResponse &&
-        typeof fullResponse === "object" &&
-        "customers" in fullResponse &&
-        "totalPages" in fullResponse &&
-        "currentPage" in fullResponse
-      ) {
-        // console.log("Cache hit! Returning full response data.");
-        return NextResponse.json(fullResponse);
-      } else {
-        // console.log("Cached data is incomplete. Clearing cache.");
-        await redis.del(cacheKey);
-      }
-    } catch (error) {
-      console.error("Error parsing cached data, clearing cache...", error);
-      await redis.del(cacheKey);
-    }
-  }
+  // Escape special regex characters in the search term
+  const escapeRegex = (str: string) =>
+    str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escapedSearch = escapeRegex(search);
 
   // Build the MongoDB query for searching across name, email, and phoneNumber.
   const query = search
     ? {
         $or: [
-          { name: { $regex: search, $options: "i" } },
-          { email: { $regex: search, $options: "i" } },
-          { phoneNumber: { $regex: search, $options: "i" } },
+          { name: { $regex: escapedSearch, $options: "i" } },
+          { email: { $regex: escapedSearch, $options: "i" } },
+          { phoneNumber: { $regex: escapedSearch, $options: "i" } },
         ],
       }
     : {};
@@ -155,10 +108,6 @@ export async function GET(req: NextRequest) {
       currentPage: page,
     };
 
-    // Cache the complete response payload as a JSON string for 10 minutes.
-    await redis.set(cacheKey, JSON.stringify(responsePayload), { ex: 600 });
-
-    // Return the complete response.
     return NextResponse.json(responsePayload);
   } catch (error) {
     console.error("Error fetching customers:", error);
@@ -198,18 +147,6 @@ export async function POST(request: NextRequest) {
     const customers = db.collection("customers");
 
     /**
-     * @description Checks if a customer with the same phone number already exists.
-     */
-    // const existingCustomer = await customers.findOne({ phoneNumber });
-
-    // if (existingCustomer) {
-    //   return NextResponse.json(
-    //     { error: "Customer already exists" },
-    //     { status: 409 }
-    //   );
-    // }
-
-    /**
      * @description Inserts the new customer data into the database.
      */
     const newCustomer = await customers.insertOne({
@@ -220,14 +157,6 @@ export async function POST(request: NextRequest) {
       date,
       createdAt: new Date(), // Add createdAt field with current date
     });
-
-    // Invalidate the cache for all customer pages.
-    // Using a pattern match to find all keys starting with "customers-page-"
-    const keys = await redis.keys("customers-page-*");
-    if (keys.length > 0) {
-      await Promise.all(keys.map((key) => redis.del(key)));
-      console.log("Cache invalidated for keys:", keys);
-    }
 
     /**
      * @description Returns a success message with the ID of the newly created customer.
@@ -245,7 +174,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-//Update a customer's info
+/**
+ * @description Updates a customer's information in the database.
+ * @param {NextRequest} req - The Next.js request object.
+ * @returns {NextResponse} - A JSON response indicating success or an error.
+ */
 export async function PUT(req: NextRequest) {
   try {
     const client = await clientPromise;
@@ -265,8 +198,6 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // const customerId = new ObjectId(params.customerId);
-
     // Update customer
     const result = await customers.updateOne(
       { _id: customerObjectId },
@@ -282,14 +213,6 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // Invalidate the cache for all customer pages.
-    // Using a pattern match to find all keys starting with "customers-page-"
-    const keys = await redis.keys("customers-page-*");
-    if (keys.length > 0) {
-      await Promise.all(keys.map((key) => redis.del(key)));
-      console.log("Cache invalidated for keys:", keys);
-    }
-
     return NextResponse.json(
       { message: "Customer updated successfully" },
       { status: 200 }
@@ -303,7 +226,11 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-//Delete a customer
+/**
+ * @description Deletes a customer from the database.
+ * @param {NextRequest} req - The Next.js request object.
+ * @returns {NextResponse} - A JSON response indicating success or an error.
+ */
 export async function DELETE(req: NextRequest) {
   try {
     const { customerId } = await req.json();
@@ -315,21 +242,14 @@ export async function DELETE(req: NextRequest) {
       _id: new ObjectId(customerId as string),
     });
 
-    // Invalidate the cache for all customer pages.
-    // Using a pattern match to find all keys starting with "customers-page-"
-    const keys = await redis.keys("customers-page-*");
-    if (keys.length > 0) {
-      await Promise.all(keys.map((key) => redis.del(key)));
-      console.log("Cache invalidated for keys:", keys);
-    }
     return NextResponse.json(
       { message: "Customer deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error fetching customer:", error);
+    console.error("Error deleting customer:", error);
     return NextResponse.json(
-      { error: "Failed to fetch customer data" },
+      { error: "Failed to delete customer" },
       { status: 500 }
     );
   }
