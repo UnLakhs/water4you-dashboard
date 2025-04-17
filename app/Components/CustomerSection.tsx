@@ -109,7 +109,6 @@ const CustomerSection = () => {
             </div>
           </div>
         </div>
-
         {/* Customer Table */}
         <table className="table-auto border-collapse border border-gray-300 rounded-lg shadow-lg w-full">
           <thead className="bg-[#427d96] text-white">
@@ -172,17 +171,64 @@ const CustomerSection = () => {
             )}
           </tbody>
         </table>
-
-        {/* Pagination Controls */}
-        <div className="text-white mt-4">
-          <button disabled={currentPage === 1} onClick={prevPage}>
+        {/* Pagination */}
+        <div className="flex justify-center items-center gap-2 mt-4">
+          <button
+            className="px-3 py-1 rounded-md bg-[#427d96] text-white disabled:opacity-50"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(1)}
+          >
+            {"<<"}
+          </button>
+          <button
+            className="px-3 py-1 rounded-md bg-[#427d96] text-white disabled:opacity-50"
+            disabled={currentPage === 1}
+            onClick={prevPage}
+          >
             {"<"}
           </button>
-          <span className="mx-2">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button disabled={currentPage === totalPages} onClick={nextPage}>
+
+          {/* Page numbers */}
+          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+            let pageNum;
+            if (totalPages <= 5) {
+              pageNum = i + 1;
+            } else if (currentPage <= 3) {
+              pageNum = i + 1;
+            } else if (currentPage >= totalPages - 2) {
+              pageNum = totalPages - 4 + i;
+            } else {
+              pageNum = currentPage - 2 + i;
+            }
+
+            return (
+              <button
+                key={pageNum}
+                className={`px-3 py-1 rounded-md ${
+                  currentPage === pageNum
+                    ? "bg-white text-[#427d96] font-bold"
+                    : "bg-[#427d96] text-white"
+                }`}
+                onClick={() => setCurrentPage(pageNum)}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
+
+          <button
+            className="px-3 py-1 rounded-md bg-[#427d96] text-white disabled:opacity-50"
+            disabled={currentPage === totalPages}
+            onClick={nextPage}
+          >
             {">"}
+          </button>
+          <button
+            className="px-3 py-1 rounded-md bg-[#427d96] text-white disabled:opacity-50"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(totalPages)}
+          >
+            {">>"}
           </button>
         </div>
       </div>
