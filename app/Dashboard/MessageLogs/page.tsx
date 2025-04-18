@@ -10,6 +10,7 @@ if (process.env.NODE_ENV === "development") {
 const getLogs = async () => {
   const res = await fetch(`${baseUrl}/api/logs`, {
     method: "GET",
+    next: { revalidate: 10 },
   });
   const data: LogsResponse = await res.json();
   return data.logs;
