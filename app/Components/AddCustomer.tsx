@@ -13,7 +13,8 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phoneNumber: "",
+    countryCode: "+30", // New field for country code
+    localNumber: "", // Changed from phoneNumber
     description: "",
     date: "",
   });
@@ -35,10 +36,11 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
     setSuccess(false);
 
     try {
+      const phoneNumber = formData.countryCode + formData.localNumber; // Combine country code and local number
       const response = await fetch("/api/customers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({...formData, phoneNumber}),
       });
 
       const data = await response.json();
@@ -48,7 +50,8 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
         setFormData({
           name: "",
           email: "",
-          phoneNumber: "",
+          countryCode: "+30",
+          localNumber: "",
           description: "",
           date: "",
         });
@@ -63,7 +66,6 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
       setLoading(false);
     }
   };
-
   if (!isOpen) return null;
 
   return (
@@ -99,14 +101,28 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
           onChange={handleChange}
           className={inputStyles}
         />
-        <input
-          type="text"
-          name="phoneNumber"
-          placeholder="Phone Number"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-          className={inputStyles}
-        />
+        <div className="flex gap-2">
+          <div className="w-1/3">
+            <input
+              type="text"
+              name="countryCode"
+              placeholder="Country Code"
+              value={formData.countryCode}
+              onChange={handleChange}
+              className={inputStyles}
+            />
+          </div>
+          <div className="w-2/3">
+            <input
+              type="text"
+              name="localNumber"
+              placeholder="Phone Number"
+              value={formData.localNumber}
+              onChange={handleChange}
+              className={inputStyles}
+            />
+          </div>
+        </div>
         <textarea
           name="description"
           placeholder="Description"

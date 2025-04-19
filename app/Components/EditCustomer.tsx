@@ -18,7 +18,8 @@ const EditCustomer = ({
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phoneNumber: "",
+    countryCode: "+30",
+    localNumber: "",
     description: "",
     date: "",
   });
@@ -37,10 +38,16 @@ const EditCustomer = ({
         if (!res.ok) throw new Error("Failed to fetch customer");
 
         const data: Customer = await res.json();
+        // Simple logic assuming phoneNumber starts with country code like "+30XXXXXXXXXX"
+        const countryCodeMatch = data.phoneNumber.match(/^(\+\d{1,2})/);
+        const countryCode = countryCodeMatch ? countryCodeMatch[0] : "+30";
+        const localNumber = data.phoneNumber.replace(countryCode, "");
+
         setFormData({
           name: data.name || "",
           email: data.email || "",
-          phoneNumber: data.phoneNumber || "",
+          countryCode,
+          localNumber,
           description: data.description || "",
           date: data.date || "",
         });
@@ -69,12 +76,15 @@ const EditCustomer = ({
     setSuccess(false);
 
     try {
+      const phoneNumber = formData.countryCode + formData.localNumber;
+
       const response = await fetch(`/api/customers`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           customerId,
-         ...formData
+          ...formData,
+          phoneNumber,
         }),
       });
 
@@ -84,8 +94,8 @@ const EditCustomer = ({
 
       setSuccess(true);
       alert("Customer updated successfully");
-      onEditSuccess(); // Update customer list
-      onClose(); // Close modal after successful update
+      onEditSuccess();
+      onClose();
     } catch (err) {
       console.error("Error updating customer:", err);
       setError("An unexpected error occurred");
@@ -93,7 +103,6 @@ const EditCustomer = ({
       setLoading(false);
     }
   };
-
   if (!isOpen) return null;
 
   return (
@@ -124,14 +133,28 @@ const EditCustomer = ({
             placeholder="Email"
             className="border p-2 rounded"
           />
-          <input
-            type="tel"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            placeholder="Phone Number"
-            className="border p-2 rounded"
-          />
+          <div className="flex gap-2">
+            <div className="w-1/3">
+              <input
+                type="text"
+                name="countryCode"
+                placeholder="Country Code"
+                value={formData.countryCode}
+                onChange={handleChange}
+                className="border p-2 rounded w-full"
+              />
+            </div>
+            <div className="w-2/3">
+              <input
+                type="tel"
+                name="localNumber"
+                placeholder="Phone Number"
+                value={formData.localNumber}
+                onChange={handleChange}
+                className="border p-2 rounded w-full"
+              />
+            </div>
+          </div>
           <textarea
             name="description"
             value={formData.description}
