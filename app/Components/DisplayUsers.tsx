@@ -64,31 +64,32 @@ const DisplayUsers = ({ isAdmin }: DisplayUsersProps) => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user: User) => (
-            <tr
-              key={user._id.toString()}
-              className="bg-white hover:bg-gray-100 transition duration-200"
-            >
-              <td className={`${tableStyles}`}>{user.username}</td>
-              <td className={`${tableStyles}`}>{user.email}</td>
-              <td className={`${tableStyles}`}>{user.role}</td>
-              {/* Conditionally render the delete button only for admins */}
-              {isAdmin && (
-                <td className={`${tableStyles}`}>
-                  <div
-                    onClick={() => {
-                      setSelectedUserId(user._id.toString()); // Set the selected user
-                      setIsDeleting(true); // Open the delete confirmation modal
-                    }}
-                    className="bg-red-500 text-white px-3 py-1 mx-auto rounded flex items-center gap-1 w-fit cursor-pointer hover:bg-red-600 transition duration-200"
-                  >
-                    <FaRegTrashAlt />
-                    <span>Delete</span>
-                  </div>
-                </td>
-              )}
-            </tr>
-          ))}
+          {users
+            .filter((user) => user.email !== "kyrgidis.apostolos@gmail.com")
+            .map((user: User) => (
+              <tr
+                key={user._id.toString()}
+                className="bg-white hover:bg-gray-100 transition duration-200"
+              >
+                <td className={`${tableStyles}`}>{user.username}</td>
+                <td className={`${tableStyles}`}>{user.email}</td>
+                <td className={`${tableStyles}`}>{user.role}</td>
+                {isAdmin && (
+                  <td className={`${tableStyles}`}>
+                    <div
+                      onClick={() => {
+                        setSelectedUserId(user._id.toString());
+                        setIsDeleting(true);
+                      }}
+                      className="bg-red-500 text-white px-3 py-1 mx-auto rounded flex items-center gap-1 w-fit cursor-pointer hover:bg-red-600 transition duration-200"
+                    >
+                      <FaRegTrashAlt />
+                      <span>Delete</span>
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))}
         </tbody>
       </table>
 

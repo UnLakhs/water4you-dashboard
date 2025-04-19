@@ -122,6 +122,9 @@ export async function DELETE(req: NextRequest) {
      */
     const { userId } = await req.json();
 
+    
+  // 🔒 Protect your own account
+  const protectedEmails=["kyrgidis.apostolos@gmail.com"]
     const client = await clientPromise;
     const db = client.db("Water4You");
     const users = db.collection("users");
@@ -132,6 +135,10 @@ export async function DELETE(req: NextRequest) {
     const user = await users.findOne({ _id: new ObjectId(userId as string) });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (protectedEmails.includes(user.email)){
+      return NextResponse.json({ error: "This user cannot be deleted" }, { status: 403 });
     }
 
     /**
