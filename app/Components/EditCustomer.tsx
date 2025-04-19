@@ -51,6 +51,11 @@ const EditCustomer = ({
           description: data.description || "",
           date: data.date || "",
         });
+
+        //Reset error and success states
+        setError(null);
+        setSuccess(false);
+        
       } catch (error) {
         console.error("Error fetching customer data:", error);
       }
@@ -93,9 +98,9 @@ const EditCustomer = ({
       }
 
       setSuccess(true);
-      alert("Customer updated successfully");
       onEditSuccess();
-      onClose();
+      // Optionally close modal after a delay or leave it open
+      setTimeout(onClose, 1200);
     } catch (err) {
       console.error("Error updating customer:", err);
       setError("An unexpected error occurred");
@@ -169,9 +174,14 @@ const EditCustomer = ({
             onChange={handleChange}
             className="border p-2 rounded"
           />
-
-          {error && <p className="text-red-500">{error}</p>}
-          {success && <p className="text-green-500">Customer updated!</p>}
+          <div className="min-h-[24px]">
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {success && (
+              <p className="text-green-600 text-sm font-medium">
+                Customer updated successfully!
+              </p>
+            )}
+          </div>
 
           <div className="flex justify-end gap-2 mt-4">
             <button
