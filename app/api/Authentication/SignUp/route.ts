@@ -18,13 +18,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingUser = await users.findOne({ username });
+    const existingUser = await users.findOne({
+      $or: [{ username }, { email }],
+    });
 
     if (existingUser) {
-      return NextResponse.json(
-        { message: "User already exists" },
-        { status: 400 }
-      );
+      const isDuplicateUsername = existingUser.username === username;
+      const isDuplicateEmail = existingUser.email === email;
+
+      let message = "User already exists";
+      if (isDuplicateUsername && isDuplicateEmail) {
+        message = "Username and email already exist";
+      } else if (isDuplicateUsername) {
+        message = "Username already exists";
+      } else if (isDuplicateEmail) {
+        message = "Email already exists";
+      }
+
+      return NextResponse.json({ message }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -35,13 +46,8 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
       role: "staff",
     });
-    return NextResponse.json(
-      { message: "User created successfully" }
-    );
+    return NextResponse.json({ message: "User created successfully" });
   } catch (error) {
-    return NextResponse.json(
-      { error: error },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error }, { status: 500 });
   }
 }

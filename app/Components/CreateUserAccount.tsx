@@ -59,20 +59,37 @@ const CreateUserAccount = () => {
     setErrorMessage("");
     setSuccess(false);
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
 
     try {
+      const cleanedFormData = {
+        username: formData.username.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+      };
+
       const response = await fetch(`/api/Authentication/SignUp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(cleanedFormData),
       });
 
-      await response.json();
-      setSuccess(true);
-      location.reload();
+      const result = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(
+          result.message || "An error occurred. Please try again."
+        );
+        setSuccess(false);
+      } else {
+        setSuccess(true);
+        location.reload();
+      }
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage("An error occurred. Please try again.");
@@ -80,12 +97,10 @@ const CreateUserAccount = () => {
       setLoading(false);
     }
   };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mt-12">
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-3"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         <h2 className="text-4xl font-bold mb-2">Create Staff Account</h2>
         {errorMessage && (
           <div className="mb-4 text-red-500">{errorMessage}</div>
