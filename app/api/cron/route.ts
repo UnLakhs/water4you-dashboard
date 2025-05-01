@@ -49,7 +49,7 @@ export async function GET() {
               0
             ).toLocaleDateString("el-GR", { day: "numeric", month: "long" });
 
-            const smsBody = `Αγαπητέ/ή ${customer.name}, ήρθε η ώρα να αλλάξετε το φίλτρο νερού σας! 🚰 Έκπτωση 10% για αντικατάσταση μέχρι ${endOfMonth}. Απαντήστε STOP για διακοπή.`;
+            const smsBody = `Αγαπητέ/ή ${customer.name}, ήρθε η ώρα να αλλάξετε το φίλτρο νερού σας! 🚰 Έκπτωση 10% για αντικατάσταση μέχρι ${endOfMonth}.`;
 
             await twilioClient.messages.create({
               body: smsBody,
