@@ -43,9 +43,17 @@ export async function GET() {
         // If customer has a phone number, send SMS via Twilio.
         if (customer.phoneNumber) {
           try {
+            const endOfMonth = new Date(
+              new Date().getFullYear(),
+              new Date().getMonth() + 1,
+              0
+            ).toLocaleDateString("el-GR", { day: "numeric", month: "long" });
+
+            const smsBody = `Αγαπητέ/ή ${customer.name}, ήρθε η ώρα να αλλάξετε το φίλτρο νερού σας! 🚰 Έκπτωση 10% για αντικατάσταση μέχρι ${endOfMonth}. Απαντήστε STOP για διακοπή.`;
+
             await twilioClient.messages.create({
-              body: `Hello ${customer.name}, your due date is today!`,
-              from: process.env.TWILIO_FROM_NUMBER,
+              body: smsBody,
+              from: "WATER4YOU", // Alphanumeric sender ID (works immediately in Greece)
               to: customer.phoneNumber,
             });
             console.log(`SMS sent to ${customer.phoneNumber}`);
@@ -55,22 +63,24 @@ export async function GET() {
               recipient: customer.phoneNumber,
               status: "sent",
               timestamp: new Date(),
-              successMessage: `sms has been sent to ${customer.name} with phone ${customer.phoneNumber}`,
+              successMessage: `SMS sent to ${customer.name} (${customer.phoneNumber})`,
+              message: smsBody, // Store the actual message sent
             });
-          } catch (smsError) {
+          } catch (error) {
+            const smsError = error as { message?: string; code?: string };
             console.error(
               `Failed to send SMS to ${customer.phoneNumber}:`,
               smsError
             );
 
-            // Log failure
+            // Log failure with more details
             await logsCollection.insertOne({
               type: "sms",
               recipient: customer.phoneNumber,
               status: "failed",
               timestamp: new Date(),
-              message: `Hello ${customer.name}, your due date is today!`,
-              errorMessage: smsError,
+              errorMessage: smsError.message || String(smsError),
+              errorCode: smsError.code || "UNKNOWN_ERROR",
             });
           }
         }
@@ -129,8 +139,7 @@ export async function GET() {
             `Customer ${customer.name} has no phone number or email.`
           );
         }
-      })
-    );
+      })    );
 
     return NextResponse.json(
       { message: "Cron job completed successfully" },
