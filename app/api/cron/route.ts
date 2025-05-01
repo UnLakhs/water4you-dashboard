@@ -84,27 +84,20 @@ export async function GET() {
               subject: "Ώρα να αλλάξετε το φίλτρο νερού σας!",
               text: `Hello ${customer.name}, the time has come for you to change your water filter!`,
               html: `<div style="font-family: Arial, sans-serif; line-height: 1.6;">
-  <h2 style="color: #2b6cb0;">Αγαπητέ/ή [Customer Name],</h2>
-  
-  <p>Σύμφωνα με τις εγγραφές μας, <strong>ήρθε η ώρα να αντικαταστήσετε το φίλτρο νερού σας</strong>.</p>
-  
-  <p>Η τακτική συντήρηση είναι σημαντική για:</p>
-  <ul style="margin-left: 20px;">
-    <li>✔ Βέλτιστη ποιότητα νερού</li>
-    <li>✔ Αποτελεσματικό φιλτράρισμα</li>
-    <li>✔ Μακροζωία της συσκευής σας</li>
-  </ul>
-
-  <p>Για οποιαδήποτε απορία ή για να προγραμματίσετε μια επίσκεψη τεχνικού, μπορείτε να επικοινωνήσετε μαζί μας στο <strong>[Phone Number]</strong> ή να απαντήσετε σε αυτό το email.</p>
-
-  <p>Ευχαριστούμε που μας εμπιστεύεστε!</p>
-  
-  <p style="margin-top: 30px;">
-    Με εκτίμηση,<br>
-    <strong>Η ομάδα WATER4YOU</strong><br>
-    <img src="https://yourwebsite.com/logo.png" alt="WATER4YOU Logo" width="150" style="margin-top: 10px;">
-  </p>
-</div>`,
+                        <h2 style="color: #2b6cb0;">Αγαπητέ/ή ${customer.name},</h2>
+                        <p>Σύμφωνα με την εγγραφή σας, <strong>ήρθε η ώρα να αντικαταστήσετε το φίλτρο νερού σας</strong>.</p>
+                        <p>Η τακτική συντήρηση είναι σημαντική για:</p>
+                        <ul style="margin-left: 20px;">
+                          <li>✔ Βέλτιστη ποιότητα νερού</li>
+                          <li>✔ Αποτελεσματικό φιλτράρισμα</li>
+                          <li>✔ Μακροζωία της συσκευής σας</li>
+                        </ul>
+                        <p>Ευχαριστούμε που μας εμπιστεύεστε!</p>
+                        <p style="margin-top: 30px;">
+                          Με εκτίμηση,<br>  
+                          <strong>Η ομάδα WATER4YOU</strong><br>
+                        </p>
+                      </div>`,
             };
             const info = await transporter.sendMail(mailOptions);
             console.log(`Email sent to ${customer.email}:`, info);
