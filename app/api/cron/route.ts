@@ -79,7 +79,7 @@ export async function GET() {
         if (customer.email) {
           try {
             const mailOptions = {
-              from: process.env.EMAIL_FROM,
+              from: `"WATER4YOU" <${process.env.EMAIL_FROM}>`,
               to: customer.email,
               subject: "Change your water filter!",
               text: `Hello ${customer.name}, the time has come for you to change your water filter!`,
