@@ -44,7 +44,7 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
       });
 
       const data = await response.json();
-      //plain commit to update prod
+      
 
       if (response.ok) {
         setSuccess(true);
