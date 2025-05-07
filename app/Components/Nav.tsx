@@ -37,17 +37,19 @@ const Nav = () => {
   return (
     <nav className="bg-[#427d96] text-slate-100 sm:static lg:fixed w-full lg:w-36 lg:h-full z-10 transition-all duration-300">
       {/* Logo and burger icon */}
-      <div className="flex justify-between items-center p-4">
+      <div className="flex justify-between items-center">
         {/* Logo */}
-        <Link href={"/Dashboard/Home"}>
-          <Image
-            src="/images/vecteezy_drop-of-water_20967303.png"
-            alt="Droplet image"
-            width={20}
-            height={20}
-            className="w-auto h-auto object-cover"
-          />
-        </Link>
+        <div className="w-full h-28 relative">
+          <Link href="/Dashboard/Home">
+            <Image
+              src="/images/water4you-logo-removebg-preview.png"
+              alt="Water4You Logo"
+              fill
+              className="object-cover"
+            />
+          </Link>
+        </div>
+
         {/* Burger Menu Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
