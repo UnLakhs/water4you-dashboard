@@ -39,11 +39,14 @@ export async function GET() {
 
     console.log(`Customers due today:`, customersDueToday);
 
-    const endOfMonth = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      0
-    ).toLocaleDateString("el-GR", { day: "numeric", month: "long" });
+    // New date: 15 days from today
+    const dueDate15Days = new Date();
+    dueDate15Days.setDate(dueDate15Days.getDate() + 15);
+
+    const dueDateStr = dueDate15Days.toLocaleDateString("el-GR", {
+      day: "numeric",
+      month: "long",
+    });
 
     await Promise.all(
       customersDueToday.map(async (customer) => {
@@ -52,7 +55,8 @@ export async function GET() {
           try {
             const smsBody = templates.smsTemplate.body
               .replace("{{name}}", customer.name)
-              .replace("{{endOfMonth}}", endOfMonth);
+              .replace("{{dueDate15Days}}", dueDateStr)
+              .replace("{{product_url}}", customer.productUrl ? customer.productUrl : "");
 
             await twilioClient.messages.create({
               body: smsBody,
@@ -92,11 +96,13 @@ export async function GET() {
           try {
             const emailSubject = templates.emailTemplate.subject
               .replace("{{name}}", customer.name)
-              .replace("{{endOfMonth}}", endOfMonth);
+              .replace("{{dueDate15Days}}", dueDateStr)
+              .replace("{{product_url}}", customer.productUrl ? customer.productUrl : "");
 
             const emailHtml = templates.emailTemplate.htmlContent
               .replace("{{name}}", customer.name)
-              .replace("{{endOfMonth}}", endOfMonth);
+              .replace("{{dueDate15Days}}", dueDateStr)
+              .replace("{{product_url}}", customer.productUrl ? customer.productUrl : "");
 
             const mailOptions = {
               from: `"WATER4YOU" <${process.env.EMAIL_FROM}>`,
