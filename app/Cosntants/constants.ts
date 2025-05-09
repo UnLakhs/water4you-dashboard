@@ -16,6 +16,7 @@ export interface Customer {
   description: string;
   date: string;
   createdAt: Date;
+  productUrl?: string;
 }
 
 export interface NotificationLogs {
