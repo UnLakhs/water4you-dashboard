@@ -19,7 +19,7 @@ const ViewCustomer = ({ isOpen, onClose, customerId }: ViewCustomerProps) => {
       const res = await fetch(`/api/customers/${customerId}`, {
         method: "GET",
       });
-      const data = await res.json();
+      const data: Customer = await res.json();
       setCustomer(data);
     } catch (error) {
       console.error("Error fetching customer data:", error);
@@ -63,6 +63,21 @@ const ViewCustomer = ({ isOpen, onClose, customerId }: ViewCustomerProps) => {
             {customer.description}
           </p>
         </div>
+        {typeof customer.productUrl === "string" && customer.productUrl.trim() !== "" ? (
+          <div className="flex flex-row gap-1">
+            <span className="font-bold">Filter URL:</span>
+            <a
+              href={customer.productUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline break-all"
+            >
+              {customer.productUrl}
+            </a>
+          </div>
+        ) : (
+          <p className="text-gray-500">No product link provided</p>
+        )}
 
         <p>
           <strong>Date:</strong> {customer.date}

@@ -22,6 +22,7 @@ const EditCustomer = ({
     localNumber: "",
     description: "",
     date: "",
+    productUrl: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -50,12 +51,12 @@ const EditCustomer = ({
           localNumber,
           description: data.description || "",
           date: data.date || "",
+          productUrl: data.productUrl || "",
         });
 
         //Reset error and success states
         setError(null);
         setSuccess(false);
-        
       } catch (error) {
         console.error("Error fetching customer data:", error);
       }
@@ -165,6 +166,14 @@ const EditCustomer = ({
             value={formData.description}
             onChange={handleChange}
             placeholder="Description"
+            className="border p-2 rounded"
+          />
+          <input
+            type="url"
+            name="productUrl"
+            value={formData.productUrl}
+            onChange={handleChange}
+            placeholder="Filter URL"
             className="border p-2 rounded"
           />
           <input
