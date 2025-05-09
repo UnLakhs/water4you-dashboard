@@ -146,7 +146,7 @@ const MessageTemplates = () => {
           />
         </div>
         <p className="text-sm text-gray-500">
-          Available variables: {"{{name}}"}
+        Available variables: {"{{name}}"}, {"{{endOfMonth}}"}
         </p>
       </div>
 
