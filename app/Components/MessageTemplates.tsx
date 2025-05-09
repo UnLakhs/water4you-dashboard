@@ -108,7 +108,7 @@ const MessageTemplates = () => {
           }
         />
         <p className="text-sm text-gray-500 mt-2">
-          Available variables: {"{{name}}"}, {"{{endOfMonth}}"}
+          Available variables: {"{{name}}"}, {"{{dueDate15Days}}"}, {"{{product_url}}"}
         </p>
       </div>
 
@@ -146,7 +146,7 @@ const MessageTemplates = () => {
           />
         </div>
         <p className="text-sm text-gray-500">
-        Available variables: {"{{name}}"}, {"{{endOfMonth}}"}
+        Available variables: {"{{name}}"}, {"{{dueDate15Days}}"}, {"{{product_url}}"}
         </p>
       </div>
 

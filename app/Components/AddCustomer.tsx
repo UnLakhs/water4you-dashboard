@@ -17,6 +17,7 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
     localNumber: "", // Changed from phoneNumber
     description: "",
     date: "",
+    productUrl: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -40,11 +41,10 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
       const response = await fetch("/api/customers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({...formData, phoneNumber}),
+        body: JSON.stringify({ ...formData, phoneNumber }),
       });
 
       const data = await response.json();
-      
 
       if (response.ok) {
         setSuccess(true);
@@ -55,6 +55,7 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
           localNumber: "",
           description: "",
           date: "",
+          productUrl: "",
         });
         location.reload();
       } else {
@@ -130,6 +131,15 @@ const AddCustomer = ({ isOpen, onClose }: AddCustomerProps) => {
           value={formData.description}
           onChange={handleChange}
           className={inputStyles}
+        />
+        <input
+          type="url"
+          className="w-full p-2 border rounded-md"
+          placeholder="filter Link (e.g https://example.com/filters/type-x)"
+          value={formData.productUrl}
+          onChange={(e) =>
+            setFormData({ ...formData, productUrl: e.target.value })
+          }
         />
         <input
           type="date"
