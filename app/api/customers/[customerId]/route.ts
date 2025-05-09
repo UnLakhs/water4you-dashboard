@@ -23,11 +23,8 @@ export async function GET(
         { status: 404 }
       );
     }
-
-    return new Response(JSON.stringify(customer), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    
+    return NextResponse.json( customer , { status: 200 });
   } catch (error) {
     console.error("Error fetching customer:", error);
     return NextResponse.json(
