@@ -37,3 +37,16 @@ export interface ErrorMessage {
 export interface LogsResponse {
   logs: NotificationLogs[]
 }
+
+export interface NotificationTemplates {
+  _id?: ObjectId;      // Optional for new inserts
+  smsTemplate: {
+    body: string;
+    lastUpdated?: Date;  // Track when SMS template was last modified
+  };
+  emailTemplate: {
+    subject: string;
+    htmlContent: string;
+    lastUpdated?: Date;  // Track when Email template was last modified
+  };
+}
