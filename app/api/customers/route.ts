@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
      * @description Parses the request body and extracts customer data.
      */
     const body = await request.json();
-    const { name, email, phoneNumber, description, date } = body || {};
+    const { name, email, phoneNumber, description, date, productUrl } = body || {};
 
     /**
      * @description Validates required fields.
@@ -151,18 +151,22 @@ export async function POST(request: NextRequest) {
      */
     const newCustomer = await customers.insertOne({
       name,
-      email: email.toLowerCase(), // store email to lowercase
+      email: email?.toLowerCase(), // store email to lowercase (optional chaining)
       phoneNumber,
       description,
       date,
-      createdAt: new Date(), // Add createdAt field with current date
+      productUrl, // Add the new field
+      createdAt: new Date(),
     });
 
     /**
      * @description Returns a success message with the ID of the newly created customer.
      */
     return NextResponse.json(
-      { message: "Customer added successfully", id: newCustomer.insertedId },
+      { 
+        message: "Customer added successfully", 
+        id: newCustomer.insertedId 
+      },
       { status: 201 }
     );
   } catch (error) {
@@ -187,7 +191,7 @@ export async function PUT(req: NextRequest) {
 
     // Parse request body
     const body = await req.json();
-    const { customerId, name, email, phoneNumber, description, date } = body;
+    const { customerId, name, email, phoneNumber, description, date, productUrl } = body;
     const customerObjectId = new ObjectId(customerId as string);
 
     // Ensure `customerId` is valid
@@ -202,7 +206,14 @@ export async function PUT(req: NextRequest) {
     const result = await customers.updateOne(
       { _id: customerObjectId },
       {
-        $set: { name, email, phoneNumber, description, date },
+        $set: { 
+          name, 
+          email, 
+          phoneNumber, 
+          description, 
+          date,
+          productUrl // Add the new field
+        },
       }
     );
 
