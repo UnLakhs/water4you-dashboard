@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaSave, FaSms, FaEnvelope, FaMagic } from "react-icons/fa";
+import { FaSave, FaSms, FaEnvelope } from "react-icons/fa";
 import { NotificationTemplates } from "../Cosntants/constants";
 
 // Define the TemplateState type based on NotificationTemplates interface
@@ -12,7 +12,7 @@ type TemplateState = {
   email: NotificationTemplates["emailTemplate"];
 };
 
-const messageTemplates = () => {
+const MessageTemplates = () => {
   const [templates, setTemplates] = useState<TemplateState>({
     sms: { body: "" },
     email: { subject: "", htmlContent: "" },
@@ -162,4 +162,4 @@ const messageTemplates = () => {
   );
 };
 
-export default messageTemplates;
+export default MessageTemplates;
