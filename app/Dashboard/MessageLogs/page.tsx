@@ -1,4 +1,8 @@
-import { LogsResponse, NotificationLogs } from "@/app/Cosntants/constants";
+export const dynamic = "force-dynamic";
+
+import { LogsResponse, NotificationLogs, User } from "@/app/Cosntants/constants";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 let baseUrl;
 if (process.env.NODE_ENV === "development") {
@@ -6,6 +10,30 @@ if (process.env.NODE_ENV === "development") {
 } else {
   baseUrl = "https://water4you-dashboard.vercel.app";
 }
+
+//Server-side function to get user data from session
+const getUserFromSession = async () => {
+  try {
+    const res = await fetch(`${baseUrl}/api/Authentication/me`, {
+      method: "GET",
+      headers: {
+        Cookie: `token=${(await cookies()).get("token")?.value || ""}`, //send the cookies manually
+      },
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch user:", res.statusText);
+      return null;
+    }
+
+    const data: User = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+};
 
 const getLogs = async () => {
   const res = await fetch(`${baseUrl}/api/logs`, {
@@ -17,7 +45,12 @@ const getLogs = async () => {
 };
 
 const MessageLogs = async () => {
+  const user = await getUserFromSession();
   const logs = await getLogs();
+
+  if (!user) {
+   redirect("/");
+  }
 
   if (logs.length === 0) {
     return (
